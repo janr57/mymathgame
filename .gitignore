@@ -1,1 +1,6 @@
 # .gitignore
+
+*~
+src/mymathgame
+src/*.o
+src/*~

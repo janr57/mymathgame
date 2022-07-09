@@ -8,13 +8,19 @@ CFLAGS = -g -Wall -O0
 
 all: $(PROG)
 
-$(PROG): $(PROG).c
-	$(CC) $(CFLAGS) -o $@ $<
+$(PROG): $(PROG).o options.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(PROG).o: $(PROG).c options.h
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+options.o: options.c options.h
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 .PHONY: clean
 
 clean:
-	rm -f $(PROG)
+	rm -f $(PROG) *.o
 
 
 
