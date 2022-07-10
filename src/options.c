@@ -54,27 +54,35 @@ int getstropts(int *pargc, char **argv, str_options *opts)
   
   if ((nflags == 0) && (tflags == 0)) {
     fprintf(stderr, "%s\n", ERR_00);
+    free(opts->strnums);
     return -1;
   } else if ((nflags > 1) && (tflags == 0)) {
     fprintf(stderr, "%s\n", ERR_10);
+    free(opts->strnums);
     return -1;
   } else if ((nflags == 0) && (tflags > 1)) {
     fprintf(stderr, "%s\n", ERR_01);
+    free(opts->strnums);
     return -1;
   } else if ((nflags > 1) && (tflags > 1)) {
     fprintf(stderr, "%s\n", ERR_11);
+    free(opts->strnums);
     return -1;
   } else if (nflags == 0) {
     fprintf(stderr, "%s\n", ERR_0X);
+    free(opts->strnums);
     return -1;
   } else if (nflags > 1) {
     fprintf(stderr, "%s\n", ERR_1X);
+    free(opts->strnums);
     return -1;
   } else if (tflags == 0) {
     fprintf(stderr, "%s\n", ERR_X0);
+    free(opts->strnums);
     return -1;
   } else if (tflags > 1) {
     fprintf(stderr, "%s\n", ERR_X1);
+    free(opts->strnums);
     return -1;
   }
 
@@ -89,11 +97,9 @@ int get_nums_total(str_options *opts)
   opts->pnums = malloc(opts->numcount * sizeof(long));
 
   /* Convert the list of strings to numbers */
-  int len = strlen(opts->strnums);
-  char *strcopy = malloc(len + 1);
-  strncpy(strcopy, opts->strnums, len);
-  char *token;
-  char *rest = strcopy;
+
+
+
 
   /* Fill the opts->pnums array provided 'strnums' has only digits and commas*/
   
@@ -104,20 +110,34 @@ int get_nums_total(str_options *opts)
   ch = *opts->strnums;
   if (!isdigit(ch)) {
     fprintf(stderr, "%s %s\n", ERR_FIRST_NUMS, opts->strnums);
+    free(opts->strnums);
+    free(opts->pnums);
+    return -1;
   }
-
+  
+  int len = strlen(opts->strnums);
   for (int i = 0; i < len; i++) {
     ch = *pstr;
     if ((!isdigit(ch) && (ch != ','))) {
       fprintf(stderr, "%s: %c in %s\n", ERR_CHAR_NUMS, ch, opts->strnums);
+      free(opts->strnums);
+      free(opts->pnums);
+      return -1;
     }
   }
-  
+
+  char *strcopy = malloc(len + 1);
+  strncpy(strcopy, opts->strnums, len);
+  char *rest = strcopy;
+  char *token;
   while ((token = strtok_r(rest, ",", &rest))) {
     pstr = token;
     while ((ch = *pstr++) != '\0') {
       if (!isdigit(ch)) {
 	fprintf(stderr, "%s: %s\n", ERR_NUMS, token);
+	free(opts->strnums);
+	free(opts->pnums);
+	free(strcopy);
 	return -1;
       }
     }
@@ -129,6 +149,9 @@ int get_nums_total(str_options *opts)
   while ((ch = *pstr++) != '\0') {
     if (!isdigit(ch)) {
       fprintf(stderr, "%s: %s\n", ERR_TOTAL, opts->strtotal);
+      free(opts->strnums);
+      free(opts->pnums);
+      free(strcopy);
       return -1;
     }
   }
@@ -162,11 +185,5 @@ int count_numbers(char *string)
   return nums;
 }
 
-void free_opts_memory(str_options *opts)
-{
-  free(opts->strnums);
-  free(opts->strtotal);
-  free(opts->pnums);  
-}
 
 
