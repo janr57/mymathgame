@@ -17,14 +17,17 @@ int main(int argc, char **argv)
 
   // Get 'opts.strnums' and 'opts.strtotal' from the program arguments.
   if ((errcode = getstropts(&argc, argv, &opts)) == -1) {
+    free_opts_memory(&opts);
     return -1;
   }
 
   if ((errcode = get_nums_total(&opts)) == -1) {
+    free_opts_memory(&opts);
     return -1;
   }
 
   printf("Count: %d\n", opts.numcount);
+  printf("Numbers: ");
   for (int i = 0; i < opts.numcount; i++) {
     printf("%ld ", *(opts.pnums + i));
   }
@@ -33,4 +36,3 @@ int main(int argc, char **argv)
 
   return 0;
 }
-

@@ -95,15 +95,36 @@ int get_nums_total(str_options *opts)
   char *token;
   char *rest = strcopy;
 
-  /* Fill the opts->pnums array */
+  /* Fill the opts->pnums array provided 'strnums' has only digits and commas*/
+  
+  char ch;
+  char *pstr;
   long *p = opts->pnums;
+  pstr = opts->strnums;
+  ch = *opts->strnums;
+  if (!isdigit(ch)) {
+    fprintf(stderr, "%s %s\n", ERR_FIRST_NUMS, opts->strnums);
+  }
+
+  for (int i = 0; i < len; i++) {
+    ch = *pstr;
+    if ((!isdigit(ch) && (ch != ','))) {
+      fprintf(stderr, "%s: %c in %s\n", ERR_CHAR_NUMS, ch, opts->strnums);
+    }
+  }
+  
   while ((token = strtok_r(rest, ",", &rest))) {
+    pstr = token;
+    while ((ch = *pstr++) != '\0') {
+      if (!isdigit(ch)) {
+	fprintf(stderr, "%s: %s\n", ERR_NUMS, token);
+	return -1;
+      }
+    }
     *p++ = atol(token);
   }
 
-  char *pstr = opts->strtotal;
-  len = strlen(opts->strtotal);
-  char ch;
+  pstr = opts->strtotal;
   // Convert 'strtotal' to long, provided it contains only digits
   while ((ch = *pstr++) != '\0') {
     if (!isdigit(ch)) {
@@ -139,6 +160,13 @@ int count_numbers(char *string)
   }
   
   return nums;
+}
+
+void free_opts_memory(str_options *opts)
+{
+  free(opts->strnums);
+  free(opts->strtotal);
+  free(opts->pnums);  
 }
 
 

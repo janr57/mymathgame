@@ -6,7 +6,10 @@
 #define OPTIONS_H___
 
 static const char *ERR_PROGNAME = "Invalid program name: %s.";
-static const char *ERR_TOTAL = "Invalid 'total' option";
+static const char *ERR_TOTAL = "Invalid '-t' option";
+static const char *ERR_FIRST_NUMS = "Invalid first number in '-n' option";
+static const char *ERR_CHAR_NUMS = "Invalid character in '-n' option string";
+static const char *ERR_NUMS = "Invalid '-n' option number";
 static const char *ERR_00 = "You must use the '-n' and '-t' options.";
 static const char *ERR_10 = "You must use the '-n' option only once, "
                             "and one '-t' option.";
@@ -36,6 +39,7 @@ int getstropts(int *pargc, char **argv, str_options *opts);
 int usage(char *progname);
 int count_numbers(char *string);
 int get_nums_total(str_options *opts);
+void free_opts_memory(str_options *opts);
 
 #endif /* OPTIONS_H___ */
 
