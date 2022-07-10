@@ -24,14 +24,17 @@ static const char *MSG_USAGE_1 = "Usage example:";
 static const char *MSG_USAGE_2 = "-n 1,2,3,4 -t 12";
 
 typedef struct options {
-	char *strnums;
-	char *strtotal;
-	long **nums;
-	long total;
+  char *strnums;
+  char *strtotal;
+  int numcount;
+  long *pnums;
+  long total;
 } str_options;
 
 int getstropts(int *pargc, char **argv, str_options *opts);
 int usage(char *progname);
+int count_numbers(char *string);
+int get_nums_total(str_options *opts);
 
 #endif /* OPTIONS_H___ */
 

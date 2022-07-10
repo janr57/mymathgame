@@ -80,6 +80,33 @@ int getstropts(int *pargc, char **argv, str_options *opts)
   return 0;
 }
 
+int get_nums_total(str_options *opts)
+{
+  //int errcode;
+
+  opts->numcount = count_numbers(opts->strnums);
+  opts->pnums = malloc(opts->numcount * sizeof(long));
+
+  /* Convert the list of strings to numbers */
+  int strlength = strlen(opts->strnums);
+  char *strcopy = malloc(strlength + 1);
+  strncpy(strcopy, opts->strnums, strlength);
+  char *token;
+  char *rest = strcopy;
+
+  /* Fill the opts->pnums array */
+  long *p = opts->pnums;
+  while ((token = strtok_r(rest, ",", &rest))) {
+    *p = atol(token);
+    p++;
+  }
+
+  // Convert 'strtotal' to long
+  opts->total = atol(opts->strtotal);
+
+  return 0;
+}
+
 int usage(char *progname) {
   if (strlen(progname) == 1) {
     fprintf(stderr, "%s %s\n", ERR_PROGNAME, progname);
@@ -89,6 +116,20 @@ int usage(char *progname) {
   printf("%s %s %s\n", MSG_USAGE_1, progname, MSG_USAGE_2);
 
   return 0;
+}
+
+int count_numbers(char *string)
+{
+// Count comma character occurrences in string
+  int len = strlen(string);
+  int nums = 1;
+  for (int i = 1; i < len; i++) {
+    if (string[i] == ',') {
+      nums++;
+    }
+  }
+  
+  return nums;
 }
 
 
