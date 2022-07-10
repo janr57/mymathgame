@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "options.h"
 
@@ -88,20 +89,28 @@ int get_nums_total(str_options *opts)
   opts->pnums = malloc(opts->numcount * sizeof(long));
 
   /* Convert the list of strings to numbers */
-  int strlength = strlen(opts->strnums);
-  char *strcopy = malloc(strlength + 1);
-  strncpy(strcopy, opts->strnums, strlength);
+  int len = strlen(opts->strnums);
+  char *strcopy = malloc(len + 1);
+  strncpy(strcopy, opts->strnums, len);
   char *token;
   char *rest = strcopy;
 
   /* Fill the opts->pnums array */
   long *p = opts->pnums;
   while ((token = strtok_r(rest, ",", &rest))) {
-    *p = atol(token);
-    p++;
+    *p++ = atol(token);
   }
 
-  // Convert 'strtotal' to long
+  char *pstr = opts->strtotal;
+  len = strlen(opts->strtotal);
+  char ch;
+  // Convert 'strtotal' to long, provided it contains only digits
+  while ((ch = *pstr++) != '\0') {
+    if (!isdigit(ch)) {
+      fprintf(stderr, "%s: %s\n", ERR_TOTAL, opts->strtotal);
+      return -1;
+    }
+  }
   opts->total = atol(opts->strtotal);
 
   return 0;

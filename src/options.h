@@ -6,6 +6,7 @@
 #define OPTIONS_H___
 
 static const char *ERR_PROGNAME = "Invalid program name: %s.";
+static const char *ERR_TOTAL = "Invalid 'total' option";
 static const char *ERR_00 = "You must use the '-n' and '-t' options.";
 static const char *ERR_10 = "You must use the '-n' option only once, "
                             "and one '-t' option.";
