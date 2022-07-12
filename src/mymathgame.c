@@ -9,28 +9,22 @@
 #include <unistd.h>
 
 #include "options.h"
+#include "mathops.h"
 
 int main(int argc, char **argv)
 {
-  str_options opts;
+  str_Options opts;
   int errcode;
 
-  // Get 'opts.strnums' and 'opts.strtotal' from the program arguments.
-  if ((errcode = getstropts(&argc, argv, &opts)) == -1) {
+  /* Deal with options passed as program arguments */
+  if ((errcode = get_options(&argc, argv, &opts)) == -1) {
     return -1;
   }
+  print_options_summary(&opts);
 
-  if ((errcode = get_nums_total(&opts)) == -1) {
+  if ((errcode = try_mathops(opts.total, opts.numcount, opts.pnums)) == -1) {
     return -1;
   }
-
-  printf("Count: %d\n", opts.numcount);
-  printf("Numbers: ");
-  for (int i = 0; i < opts.numcount; i++) {
-    printf("%ld ", *(opts.pnums + i));
-  }
-  printf("\n");
-  printf("Total: %ld\n", opts.total);
-
+  
   return 0;
 }

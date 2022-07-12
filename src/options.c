@@ -11,6 +11,22 @@
 
 #include "options.h"
 
+int get_options(int *pargc, char **argv, str_Options *popts)
+{
+  int errcode;
+  
+  // Get 'opts.strnums' and 'opts.strtotal' from the program arguments.
+  if ((errcode = getstropts(pargc, argv, popts)) == -1) {
+    return -1;
+  }
+
+  if ((errcode = get_nums_total(popts)) == -1) {
+    return -1;
+  }
+
+  return 0;
+}
+
 /*
  * getstropts
  * Arguments:
@@ -24,7 +40,7 @@
  * -1: error
  *  0: Ok
  */
-int getstropts(int *pargc, char **argv, str_options *opts)
+int getstropts(int *pargc, char **argv, str_Options *popts)
 {
   /* Expect at least four arguments */
   if (*pargc != 5) {
@@ -38,12 +54,12 @@ int getstropts(int *pargc, char **argv, str_options *opts)
     switch (ch) {
     case 'n':
       nflags++;
-      opts->strnums = malloc(1 + strlen(optarg));	
-      strncpy(opts->strnums, optarg, strlen(optarg));
+      popts->strnums = malloc(1 + strlen(optarg));	
+      strncpy(popts->strnums, optarg, strlen(optarg));
       break;
     case 't':
       tflags++;
-      opts->strtotal = optarg;
+      popts->strtotal = optarg;
       break;
     default:
       usage(argv[0]);
@@ -54,47 +70,47 @@ int getstropts(int *pargc, char **argv, str_options *opts)
   
   if ((nflags == 0) && (tflags == 0)) {
     fprintf(stderr, "%s\n", ERR_00);
-    free(opts->strnums);
+    free(popts->strnums);
     return -1;
   } else if ((nflags > 1) && (tflags == 0)) {
     fprintf(stderr, "%s\n", ERR_10);
-    free(opts->strnums);
+    free(popts->strnums);
     return -1;
   } else if ((nflags == 0) && (tflags > 1)) {
     fprintf(stderr, "%s\n", ERR_01);
-    free(opts->strnums);
+    free(popts->strnums);
     return -1;
   } else if ((nflags > 1) && (tflags > 1)) {
     fprintf(stderr, "%s\n", ERR_11);
-    free(opts->strnums);
+    free(popts->strnums);
     return -1;
   } else if (nflags == 0) {
     fprintf(stderr, "%s\n", ERR_0X);
-    free(opts->strnums);
+    free(popts->strnums);
     return -1;
   } else if (nflags > 1) {
     fprintf(stderr, "%s\n", ERR_1X);
-    free(opts->strnums);
+    free(popts->strnums);
     return -1;
   } else if (tflags == 0) {
     fprintf(stderr, "%s\n", ERR_X0);
-    free(opts->strnums);
+    free(popts->strnums);
     return -1;
   } else if (tflags > 1) {
     fprintf(stderr, "%s\n", ERR_X1);
-    free(opts->strnums);
+    free(popts->strnums);
     return -1;
   }
 
   return 0;
 }
 
-int get_nums_total(str_options *opts)
+int get_nums_total(str_Options *popts)
 {
   //int errcode;
 
-  opts->numcount = count_numbers(opts->strnums);
-  opts->pnums = malloc(opts->numcount * sizeof(long));
+  popts->numcount = count_numbers(popts->strnums);
+  popts->pnums = malloc(popts->numcount * sizeof(long));
 
   /* Convert the list of strings to numbers */
 
@@ -105,29 +121,29 @@ int get_nums_total(str_options *opts)
   
   char ch;
   char *pstr;
-  long *p = opts->pnums;
-  pstr = opts->strnums;
-  ch = *opts->strnums;
+  long *p = popts->pnums;
+  pstr = popts->strnums;
+  ch = *popts->strnums;
   if (!isdigit(ch)) {
-    fprintf(stderr, "%s %s\n", ERR_FIRST_NUMS, opts->strnums);
-    free(opts->strnums);
-    free(opts->pnums);
+    fprintf(stderr, "%s %s\n", ERR_FIRST_NUMS, popts->strnums);
+    free(popts->strnums);
+    free(popts->pnums);
     return -1;
   }
   
-  int len = strlen(opts->strnums);
+  int len = strlen(popts->strnums);
   for (int i = 0; i < len; i++) {
     ch = *pstr;
     if ((!isdigit(ch) && (ch != ','))) {
-      fprintf(stderr, "%s: %c in %s\n", ERR_CHAR_NUMS, ch, opts->strnums);
-      free(opts->strnums);
-      free(opts->pnums);
+      fprintf(stderr, "%s: %c in %s\n", ERR_CHAR_NUMS, ch, popts->strnums);
+      free(popts->strnums);
+      free(popts->pnums);
       return -1;
     }
   }
 
   char *strcopy = malloc(len + 1);
-  strncpy(strcopy, opts->strnums, len);
+  strncpy(strcopy, popts->strnums, len);
   char *rest = strcopy;
   char *token;
   while ((token = strtok_r(rest, ",", &rest))) {
@@ -135,8 +151,8 @@ int get_nums_total(str_options *opts)
     while ((ch = *pstr++) != '\0') {
       if (!isdigit(ch)) {
 	fprintf(stderr, "%s: %s\n", ERR_NUMS, token);
-	free(opts->strnums);
-	free(opts->pnums);
+	free(popts->strnums);
+	free(popts->pnums);
 	free(strcopy);
 	return -1;
       }
@@ -144,18 +160,18 @@ int get_nums_total(str_options *opts)
     *p++ = atol(token);
   }
 
-  pstr = opts->strtotal;
+  pstr = popts->strtotal;
   // Convert 'strtotal' to long, provided it contains only digits
   while ((ch = *pstr++) != '\0') {
     if (!isdigit(ch)) {
-      fprintf(stderr, "%s: %s\n", ERR_TOTAL, opts->strtotal);
-      free(opts->strnums);
-      free(opts->pnums);
+      fprintf(stderr, "%s: %s\n", ERR_TOTAL, popts->strtotal);
+      free(popts->strnums);
+      free(popts->pnums);
       free(strcopy);
       return -1;
     }
   }
-  opts->total = atol(opts->strtotal);
+  popts->total = atol(popts->strtotal);
 
   return 0;
 }
@@ -185,5 +201,16 @@ int count_numbers(char *string)
   return nums;
 }
 
+int print_options_summary(str_Options *popts)
+{
+  printf("Count: %d\n", popts->numcount);
+  printf("Numbers: ");
+  for (int i = 0; i < popts->numcount; i++) {
+    printf("%ld ", *(popts->pnums + i));
+  }
+  printf("\n");
+  printf("Total: %ld\n", popts->total);
 
+  return 0;
+}
 

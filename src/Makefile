@@ -8,7 +8,7 @@ CFLAGS = -g -Wall -O0
 
 all: $(PROG)
 
-$(PROG): $(PROG).o options.o
+$(PROG): $(PROG).o options.o mathops.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 $(PROG).o: $(PROG).c options.h
@@ -17,10 +17,13 @@ $(PROG).o: $(PROG).c options.h
 options.o: options.c options.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+mathops.o: mathops.c mathops.h
+	$(CC) $(CFLAGS) -o $@ -c $<
+
 .PHONY: clean
 
 clean:
-	rm -f $(PROG) *.o
+	rm -f $(PROG) *.o *~ *#
 
 
 
