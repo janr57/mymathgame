@@ -31,6 +31,20 @@ int try_mathops(long total, long numcount, long *pnums)
   }
   
   printf("No math operations yet!\n");
+
+  for (int i = 0; i < numcount; i++) {
+    printf("%ld ", tnums[i]);
+  }
+  printf("\n");
+
+  int ret;
+  do {
+    ret = next_permutation(tnums, numcount);
+    for (int i = 0; i < numcount; i++) {
+      printf("%ld ", tnums[i]);
+    }
+    printf("\n");
+  } while(ret);
   
   return 0;
 }
@@ -48,6 +62,10 @@ char *start_oplist(long numcount, char *avail_ops)
   return oplist;
 }
 
+
+/*
+ * Computes the next lexicographical permutation of the specified array of
+ * long ints in place */
 
 int next_oplist(char *oplist, long numcount, char *avail_ops)
 {
@@ -83,4 +101,44 @@ int find_string(char *avail_ops, char ch)
 
   return i;
 }
+
+int next_permutation(long *nums, long len)
+{
+  // Find non-increasing suffix
+  if (len == 0) {
+    return 0;
+  }
+
+  size_t i = len - 1;
+  while (i > 0 && nums[i - 1] >= nums[i]) {
+    i--;
+  }
+
+  if (i == 0) {
+    return 0;
+  }
+
+  // Find successor to pivot
+  size_t j = len - 1;
+  while (nums[j] <=  nums[i - 1]) {
+    j--;
+  }
+
+  int temp = nums[i - 1];
+  nums[i - 1] = nums[j];
+  nums[j] = temp;
+
+  // Reverse suffix
+  j = len - 1;
+  while (i < j) {
+    temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+    i++;
+    j--;
+  }
+
+  return 1;
+}
+
 

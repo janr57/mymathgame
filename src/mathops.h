@@ -15,6 +15,7 @@ char *get_operation_list(long numcount);
 char *start_oplist(long numcount, char *avail_ops);
 int next_oplist(char *oplist, long numcount, char *avail_ops);
 int find_string(char *avail_ops, char ch);
-  
+int next_permutation(long *nums, long len);
+
 #endif /* MATHOPS_H___ */
 
