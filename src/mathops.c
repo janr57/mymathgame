@@ -38,13 +38,13 @@ int try_mathops(long total, long numcount, long *pnums)
   printf("\n");
 
   int ret;
-  do {
+  while ((ret = next_permutation(tnums, numcount)) != 0) {
     ret = next_permutation(tnums, numcount);
     for (int i = 0; i < numcount; i++) {
       printf("%ld ", tnums[i]);
     }
     printf("\n");
-  } while(ret);
+  }
   
   return 0;
 }

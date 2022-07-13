@@ -45,12 +45,13 @@ int getstropts(int *pargc, char **argv, str_Options *popts)
   /* Expect at least four arguments */
   if (*pargc != 5) {
     usage(argv[0]);
+    return -1;
   }
 
-  int nflags = 0, tflags = 0;
+  int nflags = 0, tflags = 0, oflags = 0;
   int ch;
 
-  while ((ch = getopt(*pargc, argv, "n:t:")) != -1) {
+  while ((ch = getopt(*pargc, argv, "n:t:o::")) != -1) {
     switch (ch) {
     case 'n':
       nflags++;
@@ -61,6 +62,11 @@ int getstropts(int *pargc, char **argv, str_Options *popts)
       tflags++;
       popts->strtotal = optarg;
       break;
+    case 'o':
+      oflags++;
+      popts->mathops = malloc(1+strlen(optarg));
+      strncpy(popts->mathops, optarg, strlen(optarg));
+			     
     default:
       usage(argv[0]);
     }
@@ -109,25 +115,25 @@ int get_nums_total(str_Options *popts)
 {
   //int errcode;
 
-  popts->numcount = count_numbers(popts->strnums);
-  popts->pnums = malloc(popts->numcount * sizeof(long));
+  popts->numslen = count_numbers(popts->strnums);
+  popts->nums = malloc(popts->numslen * sizeof(long));
 
   /* Convert the list of strings to numbers */
 
 
 
 
-  /* Fill the opts->pnums array provided 'strnums' has only digits and commas*/
+  /* Fill the opts->nums array provided 'strnums' has only digits and commas*/
   
   char ch;
   char *pstr;
-  long *p = popts->pnums;
+  long *p = popts->nums;
   pstr = popts->strnums;
   ch = *popts->strnums;
   if (!isdigit(ch)) {
     fprintf(stderr, "%s %s\n", ERR_FIRST_NUMS, popts->strnums);
     free(popts->strnums);
-    free(popts->pnums);
+    free(popts->nums);
     return -1;
   }
   
@@ -137,7 +143,7 @@ int get_nums_total(str_Options *popts)
     if ((!isdigit(ch) && (ch != ','))) {
       fprintf(stderr, "%s: %c in %s\n", ERR_CHAR_NUMS, ch, popts->strnums);
       free(popts->strnums);
-      free(popts->pnums);
+      free(popts->nums);
       return -1;
     }
   }
@@ -152,7 +158,7 @@ int get_nums_total(str_Options *popts)
       if (!isdigit(ch)) {
 	fprintf(stderr, "%s: %s\n", ERR_NUMS, token);
 	free(popts->strnums);
-	free(popts->pnums);
+	free(popts->nums);
 	free(strcopy);
 	return -1;
       }
@@ -166,7 +172,7 @@ int get_nums_total(str_Options *popts)
     if (!isdigit(ch)) {
       fprintf(stderr, "%s: %s\n", ERR_TOTAL, popts->strtotal);
       free(popts->strnums);
-      free(popts->pnums);
+      free(popts->nums);
       free(strcopy);
       return -1;
     }
@@ -182,16 +188,16 @@ int usage(char *progname) {
     return -1;
   }
 
-  printf("%s %s %s\n", MSG_USAGE_1, progname, MSG_USAGE_2);
+  printf("%s %s %s %s\n", MSG_USAGE_1, progname, MSG_USAGE_2, MSG_USAGE_3);
 
   return 0;
 }
 
-int count_numbers(char *string)
+size_t count_numbers(char *string)
 {
 // Count comma character occurrences in string
-  int len = strlen(string);
-  int nums = 1;
+  size_t len = strlen(string);
+  size_t nums = 1;
   for (int i = 1; i < len; i++) {
     if (string[i] == ',') {
       nums++;
@@ -203,10 +209,10 @@ int count_numbers(char *string)
 
 int print_options_summary(str_Options *popts)
 {
-  printf("Count: %d\n", popts->numcount);
+  printf("Count: %lu\n", popts->numslen);
   printf("Numbers: ");
-  for (int i = 0; i < popts->numcount; i++) {
-    printf("%ld ", *(popts->pnums + i));
+  for (size_t i = 0; i < popts->numslen; i++) {
+    printf("%ld ", *(popts->nums + i));
   }
   printf("\n");
   printf("Total: %ld\n", popts->total);

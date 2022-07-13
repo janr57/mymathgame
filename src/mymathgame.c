@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   }
   print_options_summary(&opts);
 
-  if ((errcode = try_mathops(opts.total, opts.numcount, opts.pnums)) == -1) {
+  if ((errcode = try_mathops(opts.total, opts.numslen, opts.nums)) == -1) {
     return -1;
   }
   

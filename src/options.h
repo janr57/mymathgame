@@ -26,19 +26,22 @@ static const char *ERR_X1 = "You must use only one '-t' option, apart "
 
 static const char *MSG_USAGE_1 = "Usage example:";
 static const char *MSG_USAGE_2 = "-n 1,2,3,4 -t 12";
+static const char *MSG_USAGE_3 = "[-o +-x/]";
 
 typedef struct _Options {
   char *strnums;
   char *strtotal;
-  int numcount;
-  long *pnums;
+  long *nums;
+  char *mathops;
   long total;
+  size_t numslen;
+  size_t opslen;
 } str_Options;
 
 int get_options(int *pargc, char **argv, str_Options *popts);
 int getstropts(int *pargc, char **argv, str_Options *popts);
 int usage(char *progname);
-int count_numbers(char *string);
+size_t count_numbers(char *string);
 int get_nums_total(str_Options *popts);
 int print_options_summary(str_Options *popts);
 
