@@ -10,12 +10,12 @@ typedef struct _Rational {
   long den;
 } str_Rational;
 
-int try_mathops(long total, long numcount, long *pnums);
-char *get_operation_list(long numcount);
-char *start_oplist(long numcount, char *avail_ops);
-int next_oplist(char *oplist, long numcount, char *avail_ops);
+int try_mathops(long total, size_t numcount, long *pnums);
+char *get_operation_list(size_t numcount);
+char *start_oplist(size_t numcount, char *avail_ops);
+int next_oplist(char *oplist, size_t numcount, char *avail_ops);
 int find_string(char *avail_ops, char ch);
-int next_permutation(long *nums, long len);
+int next_permutation(long *nums, size_t len);
 
 #endif /* MATHOPS_H___ */
 

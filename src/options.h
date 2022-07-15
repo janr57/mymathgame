@@ -10,6 +10,8 @@ static const char *ERR_TOTAL = "Invalid '-t' option";
 static const char *ERR_FIRST_NUMS = "Invalid first number in '-n' option";
 static const char *ERR_CHAR_NUMS = "Invalid character in '-n' option string";
 static const char *ERR_NUMS = "Invalid '-n' option number";
+static const char *ERR_INVALID_OP = "Invalid operation";
+static const char *ERR_REPEATED_OP = "Repeated operation";
 static const char *ERR_00 = "You must use the '-n' and '-t' options.";
 static const char *ERR_10 = "You must use the '-n' option only once, "
                             "and one '-t' option.";
@@ -31,6 +33,7 @@ static const char *MSG_USAGE_3 = "[-o +-x/]";
 typedef struct _Options {
   char *strnums;
   char *strtotal;
+  char *strmathops;
   long *nums;
   char *mathops;
   long total;

@@ -9,14 +9,14 @@
 
 #include "mathops.h"
 
-int try_mathops(long total, long numcount, long *pnums)
+int try_mathops(long total, size_t numcount, long *pnums)
 {
   /* Available math operations */
   char *avail_ops = "+-*/";
   
   /* Copy 'pnums' in 'tnums' */
   long *tnums = malloc(numcount * sizeof(long));
-  for (int i=0; i<numcount; i++) {
+  for (size_t i=0; i<numcount; i++) {
     tnums[i] = pnums[i];
   }
 
@@ -32,7 +32,7 @@ int try_mathops(long total, long numcount, long *pnums)
   
   printf("No math operations yet!\n");
 
-  for (int i = 0; i < numcount; i++) {
+  for (size_t i = 0; i < numcount; i++) {
     printf("%ld ", tnums[i]);
   }
   printf("\n");
@@ -40,7 +40,7 @@ int try_mathops(long total, long numcount, long *pnums)
   int ret;
   while ((ret = next_permutation(tnums, numcount)) != 0) {
     ret = next_permutation(tnums, numcount);
-    for (int i = 0; i < numcount; i++) {
+    for (size_t i = 0; i < numcount; i++) {
       printf("%ld ", tnums[i]);
     }
     printf("\n");
@@ -50,12 +50,12 @@ int try_mathops(long total, long numcount, long *pnums)
 }
 
 
-char *start_oplist(long numcount, char *avail_ops)
+char *start_oplist(size_t numcount, char *avail_ops)
 {
   char first_char = avail_ops[0];
 
   char *oplist = malloc((numcount - 1) * sizeof(long));
-  for (int i = 0; i < numcount -1; i++) {
+  for (size_t i = 0; i < numcount -1; i++) {
     oplist[i] = first_char;
   }
 
@@ -67,7 +67,7 @@ char *start_oplist(long numcount, char *avail_ops)
  * Computes the next lexicographical permutation of the specified array of
  * long ints in place */
 
-int next_oplist(char *oplist, long numcount, char *avail_ops)
+int next_oplist(char *oplist, size_t numcount, char *avail_ops)
 {
   int count_avail_ops = strlen(avail_ops);
   char first_char = avail_ops[0];
@@ -97,12 +97,17 @@ int next_oplist(char *oplist, long numcount, char *avail_ops)
 
 int find_string(char *avail_ops, char ch)
 {
-  int i = strlen(avail_ops) - strlen(strchr(avail_ops, ch));
+  char *found = strchr(avail_ops, ch);
+  if (found == NULL) {
+    return -1;
+  }
+  
+  int i = strlen(avail_ops) - strlen(found);
 
   return i;
 }
 
-int next_permutation(long *nums, long len)
+int next_permutation(long *nums, size_t len)
 {
   // Find non-increasing suffix
   if (len == 0) {

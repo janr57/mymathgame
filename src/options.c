@@ -10,6 +10,7 @@
 #include <ctype.h>
 
 #include "options.h"
+#include "mathops.h"
 
 int get_options(int *pargc, char **argv, str_Options *popts)
 {
@@ -43,7 +44,7 @@ int get_options(int *pargc, char **argv, str_Options *popts)
 int getstropts(int *pargc, char **argv, str_Options *popts)
 {
   /* Expect at least four arguments */
-  if (*pargc != 5) {
+  if ((*pargc != 5) && (*pargc != 7)) {
     usage(argv[0]);
     return -1;
   }
@@ -51,7 +52,7 @@ int getstropts(int *pargc, char **argv, str_Options *popts)
   int nflags = 0, tflags = 0, oflags = 0;
   int ch;
 
-  while ((ch = getopt(*pargc, argv, "n:t:o::")) != -1) {
+  while ((ch = getopt(*pargc, argv, "n:t:o:")) != -1) {
     switch (ch) {
     case 'n':
       nflags++;
@@ -64,9 +65,9 @@ int getstropts(int *pargc, char **argv, str_Options *popts)
       break;
     case 'o':
       oflags++;
-      popts->mathops = malloc(1+strlen(optarg));
-      strncpy(popts->mathops, optarg, strlen(optarg));
-			     
+      popts->strmathops = malloc(1 + strlen(optarg));
+      strncpy(popts->strmathops, optarg, strlen(optarg));
+      printf("Ops: %s\n", popts->strmathops);
     default:
       usage(argv[0]);
     }
@@ -178,6 +179,36 @@ int get_nums_total(str_Options *popts)
     }
   }
   popts->total = atol(popts->strtotal);
+
+  // Accept popt->strmathops and save it in popt->mathops allowing only +, -, x, /
+  char *valid_mathops = "+-x/";
+  pstr = popts->strmathops;
+  char *pstr2;
+  int i;
+  char ch2;
+  while ((ch = *pstr++) != '\0') {
+    i = find_string(valid_mathops, ch);
+    if (i == -1) {
+      fprintf(stderr, "%s: %c\n", ERR_INVALID_OP, ch);
+      free(popts->strnums);
+      free(popts->nums);
+      free(strcopy);
+      return -1;
+    } else {
+      pstr2 = pstr;
+      while ((ch2 = *pstr2++) != '\0') {
+	if (ch == ch2) {
+	  fprintf(stderr, "%s: %c\n", ERR_REPEATED_OP, ch);
+	  free(popts->strnums);
+	  free(popts->nums);
+	  free(strcopy);
+	  return -1;
+	}
+      }
+    }
+  }
+
+  // We've found ch. Don't allow repetition
 
   return 0;
 }
