@@ -17,17 +17,32 @@ int try_mathops(strct_mathgame *mg)
     nums[i] = mg->nums[i];
   }
 
+  for (size_t i = 0; i < mg->nums_len; i++) {
+    printf("%ld ", nums[i]);
+  }
+  printf("\n");
+
+  int ret;
+  while ((ret = next_permutation(nums, mg->nums_len)) != 0) {
+    ret = next_permutation(nums, mg->nums_len);
+    for (size_t i = 0; i < mg->nums_len; i++) {
+      printf("%ld ", nums[i]);
+    }
+    printf("\n");
+  }
+
   // Generate first mathops_item
   // Reserve memory for the string
-  char *mops_item = malloc(1 + mg->mathops_len);
-  fill_first_mathops_item(mops_item, mg->mathops, mg->mathops_len);
-  printf("Math maths operation item [ 0]: %s\n", mops_item);
+  size_t len = mg->nums_len - 1;
+  char *ops_item = malloc(1 + len);
+  first_ops_item(ops_item, len, mg->mathops, mg->mathops_len);
+  printf("Math maths operation item [ 0]: %s\n", ops_item);
 
   // Generate the rest mathops_items
   int i = 1;
   int val;
-  while ((val = fill_next_mathops_item(mops_item, mg->mathops, mg->mathops_len)) == 1) {
-    printf("Next maths operation item [%2d]: %s\n", i, mops_item);
+  while ((val = next_ops_item(ops_item, len, mg->mathops, mg->mathops_len)) == 1) {
+    printf("Next maths operation item [%2d]: %s\n", i, ops_item);
     i++;
   }
   
@@ -35,30 +50,30 @@ int try_mathops(strct_mathgame *mg)
 }
 
 
-int fill_first_mathops_item(char *mops_item, char *mathops, size_t mathops_len)
-{
+int first_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len)
+{ 
   if (mathops_len == 0) {
     return -1;
   }
   
-  for (int i=0; i<mathops_len; i++) {
-    mops_item[i] = mathops[0];
+  for (int i=0; i<len; i++) {
+    ops_item[i] = mathops[0];
   }
   
   return 0;
 }
 
-int fill_next_mathops_item(char *mops_item, char *mathops, size_t mathops_len)
+int next_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len)
 {
   char first_char = mathops[0];
   char last_char = mathops[mathops_len - 1];
-  char *p = mops_item;
+  char *p = ops_item;
 
   int retval = 0;
   int j;
   char ch;
 
-  for (int i = mathops_len - 1; i >= 0; i--) {
+  for (int i = len - 1; i >= 0; i--) {
     if ((ch = *(p + i)) != last_char) {
       j = find_string(mathops, ch);
       *(p + i) = mathops[j + 1];

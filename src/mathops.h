@@ -20,8 +20,8 @@ typedef struct _Mathgame {
 
 int try_mathops(strct_mathgame *mg);
 char *get_operation_list(size_t numcount);
-int fill_first_mathops_item(char *mops_item, char *mathops, size_t mathops_len);
-int fill_next_mathops_item(char *mops_item, char *mathops, size_t mathops_len);
+int first_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
+int next_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
 int find_string(char *avail_ops, char ch);
 int next_permutation(long *nums, size_t len);
 
