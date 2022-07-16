@@ -9,104 +9,84 @@
 
 #include "mathops.h"
 
-int try_mathops(long total, size_t numcount, long *pnums)
+int try_mathops(strct_mathgame *mg)
 {
-  /* Available math operations */
-  char *avail_ops = "+-*/";
-  
-  /* Copy 'pnums' in 'tnums' */
-  long *tnums = malloc(numcount * sizeof(long));
-  for (size_t i=0; i<numcount; i++) {
-    tnums[i] = pnums[i];
+  /* Copy array 'mg->nums' into 'nums' */
+  long *nums = malloc(mg->nums_len * sizeof(long));
+  for (size_t i=0; i<mg->nums_len; i++) {
+    nums[i] = mg->nums[i];
   }
 
-  /* */
-  char *oplist = start_oplist(numcount, avail_ops);
-  printf("First math operation list: %s\n", oplist);
-  int retval = 1;
+  // Generate first mathops_item
+  // Reserve memory for the string
+  char *mops_item = malloc(1 + mg->mathops_len);
+  fill_first_mathops_item(mops_item, mg->mathops, mg->mathops_len);
+  printf("Math maths operation item [ 0]: %s\n", mops_item);
+
+  // Generate the rest mathops_items
   int i = 1;
-  while ((retval = next_oplist(oplist, numcount, avail_ops) == 1)) {
-    printf("Next math operation list %d: %s\n", i, oplist);
+  int val;
+  while ((val = fill_next_mathops_item(mops_item, mg->mathops, mg->mathops_len)) == 1) {
+    printf("Next maths operation item [%2d]: %s\n", i, mops_item);
     i++;
-  }
-  
-  printf("No math operations yet!\n");
-
-  for (size_t i = 0; i < numcount; i++) {
-    printf("%ld ", tnums[i]);
-  }
-  printf("\n");
-
-  int ret;
-  while ((ret = next_permutation(tnums, numcount)) != 0) {
-    ret = next_permutation(tnums, numcount);
-    for (size_t i = 0; i < numcount; i++) {
-      printf("%ld ", tnums[i]);
-    }
-    printf("\n");
   }
   
   return 0;
 }
 
 
-char *start_oplist(size_t numcount, char *avail_ops)
+int fill_first_mathops_item(char *mops_item, char *mathops, size_t mathops_len)
 {
-  char first_char = avail_ops[0];
-
-  char *oplist = malloc((numcount - 1) * sizeof(long));
-  for (size_t i = 0; i < numcount -1; i++) {
-    oplist[i] = first_char;
+  if (mathops_len == 0) {
+    return -1;
   }
-
-  return oplist;
+  
+  for (int i=0; i<mathops_len; i++) {
+    mops_item[i] = mathops[0];
+  }
+  
+  return 0;
 }
 
-
-/*
- * Computes the next lexicographical permutation of the specified array of
- * long ints in place */
-
-int next_oplist(char *oplist, size_t numcount, char *avail_ops)
+int fill_next_mathops_item(char *mops_item, char *mathops, size_t mathops_len)
 {
-  int count_avail_ops = strlen(avail_ops);
-  char first_char = avail_ops[0];
-  char last_char = avail_ops[count_avail_ops - 1];
-  char *p = oplist;
+  char first_char = mathops[0];
+  char last_char = mathops[mathops_len - 1];
+  char *p = mops_item;
 
   int retval = 0;
-  int i;
-  int count = 0;
+  int j;
   char ch;
-  
-  do {
-    if ((ch = *p) != last_char) {
-      i = find_string(avail_ops, ch);
-      *p = avail_ops[i + 1];
+
+  for (int i = mathops_len - 1; i >= 0; i--) {
+    if ((ch = *(p + i)) != last_char) {
+      j = find_string(mathops, ch);
+      *(p + i) = mathops[j + 1];
       retval = 1;
       break;
     } else {
-      *p = first_char;
-      p++;
-      count++;
+      *(p + i) = first_char;
     }
-  } while (count < (numcount - 1));
-
+  }
+  
   return retval;
 }
 
-int find_string(char *avail_ops, char ch)
+int find_string(char *mathops, char ch)
 {
-  char *found = strchr(avail_ops, ch);
+  char *found = strchr(mathops, ch);
   if (found == NULL) {
     return -1;
   }
   
-  int i = strlen(avail_ops) - strlen(found);
+  int i = strlen(mathops) - strlen(found);
 
   return i;
 }
 
+/*
+ * Computes the next lexicographical permutation of the specified array of
+ * long ints in place */
 int next_permutation(long *nums, size_t len)
 {
   // Find non-increasing suffix

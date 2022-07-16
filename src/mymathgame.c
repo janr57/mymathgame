@@ -13,16 +13,21 @@
 
 int main(int argc, char **argv)
 {
-  str_Options opts;
+  strct_options opts;
   int errcode;
-
   /* Deal with options passed as program arguments */
   if ((errcode = get_options(&argc, argv, &opts)) == -1) {
     return -1;
   }
   print_options_summary(&opts);
 
-  if ((errcode = try_mathops(opts.total, opts.numslen, opts.nums)) == -1) {
+  strct_mathgame mg;
+  mg.total = opts.total;
+  mg.nums = opts.nums;
+  mg.mathops = opts.mathops;
+  mg.nums_len = opts.nums_len;
+  mg.mathops_len = opts.mathops_len;
+  if ((errcode = try_mathops(&mg)) == -1) {
     return -1;
   }
   
