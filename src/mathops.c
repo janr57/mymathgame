@@ -17,27 +17,26 @@ int try_mathops(strct_mathgame *mg)
     nums[i] = mg->nums[i];
   }
 
-  for (size_t i = 0; i < mg->nums_len; i++) {
-    printf("%ld ", nums[i]);
-  }
-  printf("\n");
-
   int ret;
-  while ((ret = next_permutation(nums, mg->nums_len)) != 0) {
-    ret = next_permutation(nums, mg->nums_len);
-    for (size_t i = 0; i < mg->nums_len; i++) {
-      printf("%ld ", nums[i]);
-    }
-    printf("\n");
+  ret = first_lnums_permutation(nums, mg->nums_len);
+  print_nums(nums, mg->nums_len);
+  /*
+  while ((ret = next_lnums_permutation(nums, mg->nums_len)) != 0) {
+  print_nums(nums, mg->nums_len);
+  */
+  
+  while ((ret = next_lnums_permutation(nums, mg->nums_len)) != 0) {
+    print_nums(nums, mg->nums_len);
   }
 
+  /*
   // Generate first mathops_item
   // Reserve memory for the string
   size_t len = mg->nums_len - 1;
   char *ops_item = malloc(1 + len);
   first_ops_item(ops_item, len, mg->mathops, mg->mathops_len);
   printf("Math maths operation item [ 0]: %s\n", ops_item);
-
+  
   // Generate the rest mathops_items
   int i = 1;
   int val;
@@ -45,6 +44,7 @@ int try_mathops(strct_mathgame *mg)
     printf("Next maths operation item [%2d]: %s\n", i, ops_item);
     i++;
   }
+  */
   
   return 0;
 }
@@ -99,36 +99,55 @@ int find_string(char *mathops, char ch)
   return i;
 }
 
+int first_lnums_permutation(long *nums, size_t nums_len)
+{
+  long temp;
+  long *p = nums;
+  for (size_t i = 0; i < nums_len - 1; i++) {
+    for (size_t j = i + 1; j < nums_len; j++) {
+      if (p[i] > p[j]) {
+	temp = p[i];
+	p[i] = p[j];
+	p[j] = temp;
+      }
+    }
+  }
+
+  return 0;
+}
+
 /*
  * Computes the next lexicographical permutation of the specified array of
  * long ints in place */
-int next_permutation(long *nums, size_t len)
+int next_lnums_permutation(long *nums, size_t len)
 {
-  // Find non-increasing suffix
-  if (len == 0) {
-    return 0;
-  }
-
+  // Find the longest non-increasing suffix
   size_t i = len - 1;
   while (i > 0 && nums[i - 1] >= nums[i]) {
     i--;
+    // Now i is the head index of the suffix
   }
-
-  if (i == 0) {
+    
+  // Are we at the last permutation  already?
+  if (i <= 0) {
     return 0;
   }
 
-  // Find successor to pivot
+  // Let nums[i - 1] be the pivot
+  // Find rightmost element greater than the pivot
   size_t j = len - 1;
-  while (nums[j] <=  nums[i - 1]) {
+  while (nums[j] <= nums[i - 1]) {
     j--;
+    // Now the value nums[j] will become the new pivot
+    // Assertion: j >= i
   }
 
-  int temp = nums[i - 1];
+  // Swap the pivot with j
+  long temp = nums[i - 1];
   nums[i - 1] = nums[j];
   nums[j] = temp;
 
-  // Reverse suffix
+  // Reverse the suffix
   j = len - 1;
   while (i < j) {
     temp = nums[i];
@@ -137,8 +156,15 @@ int next_permutation(long *nums, size_t len)
     i++;
     j--;
   }
-
+  
   return 1;
 }
 
+void print_nums(long *nums, size_t nums_len)
+{
+  for (size_t i = 0; i < nums_len; i++) {
+    printf("%ld ", nums[i]);
+  }
+  printf("\n");
+}
 

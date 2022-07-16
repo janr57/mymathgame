@@ -23,7 +23,9 @@ char *get_operation_list(size_t numcount);
 int first_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
 int next_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
 int find_string(char *avail_ops, char ch);
-int next_permutation(long *nums, size_t len);
+int first_lnums_permutation(long *nums, size_t len);
+int next_lnums_permutation(long *nums, size_t len);
+void print_nums(long *nums, size_t nums_len);
 
 #endif /* MATHOPS_H___ */
 
