@@ -74,8 +74,49 @@ int try_mathops(mathgame_t *mg)
   return 0;
 }
 
+void rat_init(rational_t *r, long n, long d)
+{
+  r->num = n;
+  r->den = d;
+}
 
+void rat_add(rational_t *z, rational_t x, rational_t y)
+{
+  z->num = x.num * y.den + x.den * y.num;
+  z->den = x.den * y.den;
+}
 
+void rat_sub(rational_t *z, rational_t x, rational_t y)
+{
+  z->num = x.num * y.den - x.den * y.num;
+  z->den = x.den * y.den;
+}
 
+void rat_mul(rational_t *z, rational_t x, rational_t y)
+{
+  z->num = x.num * y.num;
+  z->den = x.den * y.den;
+}
 
+void rat_div(rational_t *z, rational_t x, rational_t y)
+{
+  z->num = x.num * y.den;
+  z->den = x.den * y.num;
+}
+
+void rat_reduce(rational_t *z)
+{
+  long r1 = z->num;
+  long r2 = z->den;
+  long gcd = r2;
+
+  while (r1 % r2) {
+    gcd = r1 % r2;
+    r1 = r2;
+    r2 = gcd;
+  }
+
+  z->num /= gcd;
+  z->den /= gcd;
+}
 
