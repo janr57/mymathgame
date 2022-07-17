@@ -72,8 +72,10 @@ int get_str_options(int *argc, char **argv, options_t *opts)
       opts->str_mathops_len = strlen(optarg);
       opts->str_mathops = malloc(1 + opts->str_mathops_len);
       strncpy(opts->str_mathops, optarg, opts->str_mathops_len);
+      break;
     default:
       usage(argv[0]);
+      break;
     }
   }
 
@@ -83,7 +85,6 @@ int get_str_options(int *argc, char **argv, options_t *opts)
   
   if ((nflags == 0) && (tflags == 0)) {
     fprintf(stderr, "%s\n", ERR_00);
-    free(opts->str_nums);
     return -1;
   } else if ((nflags > 1) && (tflags == 0)) {
     fprintf(stderr, "%s\n", ERR_10);
@@ -188,42 +189,43 @@ int get_real_options(options_t *opts)
 
   // Check opts->str_mathops.
   pstr = opts->str_mathops;
-  char *pstr2;
-  char ch2;
-  int i;
-  while ((ch = *pstr++) != '\0') {
-    // ch character must be one of valid_mathops
-    i = find_string(valid_mathops, ch);
-    if (i == -1) {
-      fprintf(stderr, "%s: %c\n", ERR_INVALID_OP, ch);
-      free(opts->str_nums);
-      free(opts->nums);
-      free(str_nums_copy);
-      return -1;
-    }
-    // ch is a valid mathop
-    // ch must not be more than once in opts->str_mathops
-    pstr2 = pstr;
-    while ((ch2 = *pstr2++) != '\0') {
-      if (ch == ch2) {
-	fprintf(stderr, "%s: %c\n", ERR_REPEATED_OP, ch);
+  if (pstr != NULL) {
+    char *pstr2;
+    char ch2;
+    int i;
+    while ((ch = *pstr++) != '\0') {
+      // ch character must be one of valid_mathops
+      i = find_string(valid_mathops, ch);
+      if (i == -1) {
+	fprintf(stderr, "%s: %c\n", ERR_INVALID_OP, ch);
 	free(opts->str_nums);
 	free(opts->nums);
 	free(str_nums_copy);
 	return -1;
       }
+      // ch is a valid mathop
+      // ch must not be more than once in opts->str_mathops
+      pstr2 = pstr;
+      while ((ch2 = *pstr2++) != '\0') {
+	if (ch == ch2) {
+	  fprintf(stderr, "%s: %c\n", ERR_REPEATED_OP, ch);
+	  free(opts->str_nums);
+	  free(opts->nums);
+	  free(str_nums_copy);
+	  return -1;
+	}
+      }
     }
   }
-
   // All valid mathops in opts->mathops in case the user does not specify them
   if (opts->str_mathops == NULL) {
-    opts->str_mathops = malloc(1 + strlen(valid_mathops));
-    strncpy(opts->str_mathops, valid_mathops, strlen(valid_mathops));
+    opts->mathops = malloc(1 + strlen(valid_mathops));
+    strncpy(opts->mathops, valid_mathops, strlen(valid_mathops));
   } else {
     opts->mathops = malloc(1 + opts->str_mathops_len);
     strncpy(opts->mathops, opts->str_mathops, opts->str_mathops_len);
   }
-  opts->mathops_len = strlen(opts->str_mathops);
+  opts->mathops_len = strlen(opts->mathops);
   
   return 0;
 }
@@ -254,10 +256,14 @@ size_t count_numbers(char *string)
 
 void print_nums(long *nums, size_t nums_len)
 {
+  printf("[");
   for (size_t i = 0; i < nums_len; i++) {
-    printf("%ld ", nums[i]);
+    printf("%ld", nums[i]);
+    if (i != nums_len - 1) {
+      printf(",");
+    }
   }
-  printf("\n");
+  printf("]\n");
 }
 
 void print_mathops(char *mathops)

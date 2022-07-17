@@ -31,6 +31,9 @@ int main(int argc, char **argv)
   if ((errcode = try_mathops(&mg)) == -1) {
     return -1;
   }
+
+  free(opts.str_nums);
+  free(opts.str_mathops);
   
   return 0;
 }
