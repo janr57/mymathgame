@@ -284,3 +284,4 @@ void free_options(options_t *opts)
   free(opts->nums);
   free(opts->mathops);
 }
+

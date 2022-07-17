@@ -12,6 +12,15 @@
 #include "algorithms.h"
 #include "mathops.h"
 
+void fill_mathgame_struct(mathgame_t *mg, options_t *opts)
+{
+  mg->total = opts->total;
+  mg->nums = opts->nums;
+  mg->mathops = opts->mathops;
+  mg->nums_len = opts->nums_len;
+  mg->mathops_len = opts->mathops_len;
+}
+
 int main(int argc, char **argv)
 {
   options_t opts;
@@ -23,11 +32,7 @@ int main(int argc, char **argv)
   print_options_summary(&opts);
 
   mathgame_t mg;
-  mg.total = opts.total;
-  mg.nums = opts.nums;
-  mg.mathops = opts.mathops;
-  mg.nums_len = opts.nums_len;
-  mg.mathops_len = opts.mathops_len;
+  fill_mathgame_struct(&mg, &opts);
   if ((errcode = try_mathops(&mg)) == -1) {
     return -1;
   }
