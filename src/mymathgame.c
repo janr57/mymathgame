@@ -9,11 +9,12 @@
 #include <unistd.h>
 
 #include "options.h"
+#include "algorithms.h"
 #include "mathops.h"
 
 int main(int argc, char **argv)
 {
-  strct_options opts;
+  options_t opts;
   int errcode;
   /* Deal with options passed as program arguments */
   if ((errcode = get_options(&argc, argv, &opts)) == -1) {
@@ -21,7 +22,7 @@ int main(int argc, char **argv)
   }
   print_options_summary(&opts);
 
-  strct_mathgame mg;
+  mathgame_t mg;
   mg.total = opts.total;
   mg.nums = opts.nums;
   mg.mathops = opts.mathops;

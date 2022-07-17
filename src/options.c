@@ -9,10 +9,10 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#include "algorithms.h"
 #include "options.h"
-#include "mathops.h"
 
-int get_options(int *argc, char **argv, strct_options *opts)
+int get_options(int *argc, char **argv, options_t *opts)
 {
   int errcode;
   
@@ -42,7 +42,7 @@ int get_options(int *argc, char **argv, strct_options *opts)
  * -1: error
  *  0: Ok
  */
-int get_str_options(int *argc, char **argv, strct_options *opts)
+int get_str_options(int *argc, char **argv, options_t *opts)
 {
   /* Expect at least four arguments */
   if ((*argc != 5) && (*argc != 7)) {
@@ -118,7 +118,7 @@ int get_str_options(int *argc, char **argv, strct_options *opts)
   return 0;
 }
 
-int get_real_options(strct_options *opts)
+int get_real_options(options_t *opts)
 {
   //int errcode;
   opts->nums_len = count_numbers(opts->str_nums);
@@ -252,7 +252,20 @@ size_t count_numbers(char *string)
   return nums;
 }
 
-int print_options_summary(strct_options *opts)
+void print_nums(long *nums, size_t nums_len)
+{
+  for (size_t i = 0; i < nums_len; i++) {
+    printf("%ld ", nums[i]);
+  }
+  printf("\n");
+}
+
+void print_mathops(char *mathops)
+{
+  printf("%s\n", mathops);
+}
+
+int print_options_summary(options_t *opts)
 {
   printf("Numbers count: %lu\n", opts->nums_len);
   printf("Numbers: ");

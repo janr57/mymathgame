@@ -8,7 +8,7 @@
 typedef struct _Rational {
   long num;
   long den;
-} strct_rational;
+} rational_t;
 
 typedef struct _Mathgame {
   long total;
@@ -16,15 +16,9 @@ typedef struct _Mathgame {
   char *mathops;
   size_t nums_len;
   size_t mathops_len;
-} strct_mathgame;
+} mathgame_t;
 
-int try_mathops(strct_mathgame *mg);
-char *get_operation_list(size_t numcount);
-int first_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
-int next_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
-int find_string(char *avail_ops, char ch);
-int first_lnums_permutation(long *nums, size_t len);
-int next_lnums_permutation(long *nums, size_t len);
+int try_mathops(mathgame_t *mg);
 void print_nums(long *nums, size_t nums_len);
 
 #endif /* MATHOPS_H___ */
