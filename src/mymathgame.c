@@ -32,8 +32,7 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  free(opts.str_nums);
-  free(opts.str_mathops);
+  free_options(&opts);
   
   return 0;
 }

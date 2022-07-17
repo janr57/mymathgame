@@ -46,14 +46,15 @@ typedef struct _Options {
 
 static char *valid_mathops = "+-x/";
 
-int get_options(int *pargc, char **argv, options_t *popts);
-int get_str_options(int *pargc, char **argv, options_t *popts);
-int usage(char *progname);
+int get_options(int *pargc, char **argv, options_t *opts);
+int get_str_options(int *pargc, char **argv, options_t *opts);
+void usage(char *progname);
 size_t count_numbers(char *string);
-int get_real_options(options_t *popts);
+int get_real_options(options_t *opts);
 void print_nums(long *nums, size_t nums_len);
 void print_mathops(char *mathops);
-int print_options_summary(options_t *popts);
+int print_options_summary(options_t *opts);
+void free_options(options_t *opts);
 
 #endif /* OPTIONS_H___ */
 

@@ -85,34 +85,35 @@ int get_str_options(int *argc, char **argv, options_t *opts)
   
   if ((nflags == 0) && (tflags == 0)) {
     fprintf(stderr, "%s\n", ERR_00);
+    free_options(opts);
     return -1;
   } else if ((nflags > 1) && (tflags == 0)) {
     fprintf(stderr, "%s\n", ERR_10);
-    free(opts->str_nums);
+    free_options(opts);
     return -1;
   } else if ((nflags == 0) && (tflags > 1)) {
     fprintf(stderr, "%s\n", ERR_01);
-    free(opts->str_nums);
+    free_options(opts);
     return -1;
   } else if ((nflags > 1) && (tflags > 1)) {
     fprintf(stderr, "%s\n", ERR_11);
-    free(opts->str_nums);
+    free_options(opts);
     return -1;
   } else if (nflags == 0) {
     fprintf(stderr, "%s\n", ERR_0X);
-    free(opts->str_nums);
+    free_options(opts);
     return -1;
   } else if (nflags > 1) {
     fprintf(stderr, "%s\n", ERR_1X);
-    free(opts->str_nums);
+    free_options(opts);
     return -1;
   } else if (tflags == 0) {
     fprintf(stderr, "%s\n", ERR_X0);
-    free(opts->str_nums);
+    free_options(opts);
     return -1;
   } else if (tflags > 1) {
     fprintf(stderr, "%s\n", ERR_X1);
-    free(opts->str_nums);
+    free_options(opts);
     return -1;
   }
 
@@ -136,8 +137,7 @@ int get_real_options(options_t *opts)
   char ch = *opts->str_nums;
   if (!isdigit(ch)) {
     fprintf(stderr, "%s %s\n", ERR_FIRST_NUMS, opts->str_nums);
-    free(opts->str_nums);
-    free(opts->nums);
+    free_options(opts);
     return -1;
   }
   
@@ -148,8 +148,7 @@ int get_real_options(options_t *opts)
     ch = *pstr;
     if ((!isdigit(ch) && (ch != ','))) {
       fprintf(stderr, "%s: %c in %s\n", ERR_CHAR_NUMS, ch, opts->str_nums);
-      free(opts->str_nums);
-      free(opts->nums);
+      free_options(opts);
       return -1;
     }
   }
@@ -165,8 +164,7 @@ int get_real_options(options_t *opts)
     while ((ch = *pstr++) != '\0') {
       if (!isdigit(ch)) {
 	fprintf(stderr, "%s: %s\n", ERR_NUMS, token);
-	free(opts->str_nums);
-	free(opts->nums);
+	free_options(opts);
 	free(str_nums_copy);
 	return -1;
       }
@@ -179,8 +177,7 @@ int get_real_options(options_t *opts)
   while ((ch = *pstr++) != '\0') {
     if (!isdigit(ch)) {
       fprintf(stderr, "%s: %s\n", ERR_TOTAL, opts->str_total);
-      free(opts->str_nums);
-      free(opts->nums);
+      free_options(opts);
       free(str_nums_copy);
       return -1;
     }
@@ -198,9 +195,8 @@ int get_real_options(options_t *opts)
       i = find_string(valid_mathops, ch);
       if (i == -1) {
 	fprintf(stderr, "%s: %c\n", ERR_INVALID_OP, ch);
-	free(opts->str_nums);
-	free(opts->nums);
 	free(str_nums_copy);
+	free_options(opts);
 	return -1;
       }
       // ch is a valid mathop
@@ -209,9 +205,8 @@ int get_real_options(options_t *opts)
       while ((ch2 = *pstr2++) != '\0') {
 	if (ch == ch2) {
 	  fprintf(stderr, "%s: %c\n", ERR_REPEATED_OP, ch);
-	  free(opts->str_nums);
-	  free(opts->nums);
 	  free(str_nums_copy);
+	  free_options(opts);
 	  return -1;
 	}
       }
@@ -230,14 +225,11 @@ int get_real_options(options_t *opts)
   return 0;
 }
 
-int usage(char *progname) {
+void usage(char *progname) {
   if (strlen(progname) == 1) {
     fprintf(stderr, "%s %s\n", ERR_PROGNAME, progname);
-    return -1;
   }
   printf("%s %s %s %s\n", MSG_USAGE_1, progname, MSG_USAGE_2, MSG_USAGE_3);
-
-  return 0;
 }
 
 size_t count_numbers(char *string)
@@ -284,3 +276,11 @@ int print_options_summary(options_t *opts)
   return 0;
 }
 
+void free_options(options_t *opts)
+{
+  free(opts->str_nums);
+  free(opts->str_total);
+  free(opts->str_mathops);
+  free(opts->nums);
+  free(opts->mathops);
+}
