@@ -284,7 +284,7 @@ void print_nums(long *nums, size_t nums_len)
       printf(",");
     }
   }
-  printf("]\n");
+  printf("]");
 }
 
 void print_mathops(char *mathops)

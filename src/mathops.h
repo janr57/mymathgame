@@ -5,11 +5,6 @@
 #ifndef MATHOPS_H___
 #define MATHOPS_H___
 
-typedef struct _Rational {
-  long num;
-  long den;
-} rational_t;
-
 typedef struct _Mathgame {
   long total;
   long *nums;
@@ -19,13 +14,9 @@ typedef struct _Mathgame {
 } mathgame_t;
 
 int try_mathops(mathgame_t *mg);
-void print_nums(long *nums, size_t nums_len);
-void rat_init(rational_t *r, long n, long d);
-void rat_add(rational_t *z, rational_t x, rational_t y);
-void rat_sub(rational_t *z, rational_t x, rational_t y);
-void rat_mul(rational_t *z, rational_t x, rational_t y);
-void rat_div(rational_t *z, rational_t x, rational_t y);
-void rat_reduce(rational_t *z);
+int pwr_varwr(int *sn, int *so, long *nums, char *ops, size_t ops_len, mathgame_t *mg);
+int varwr(int *so, char *ops, size_t ops_len, mathgame_t *mg);
+void print_job(long *nums, size_t nums_len, char *ops, size_t ops_len);
 
 #endif /* MATHOPS_H___ */
 

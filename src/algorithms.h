@@ -19,5 +19,18 @@ int first_lnums_permutation(long *nums, size_t len);
 int next_lnums_permutation(long *nums, size_t len);
 size_t pwr_count(long *nums, size_t len);
 
+typedef struct _Rational {
+  long num;
+  long den;
+} rational_t;
+
+void print_nums(long *nums, size_t nums_len);
+void rat_init(rational_t *r, long n, long d);
+void rat_add(rational_t *z, rational_t x, rational_t y);
+void rat_sub(rational_t *z, rational_t x, rational_t y);
+void rat_mul(rational_t *z, rational_t x, rational_t y);
+void rat_div(rational_t *z, rational_t x, rational_t y);
+void rat_reduce(rational_t *z);
+
 #endif /* ALGORITHMS_H___ */
 

@@ -9,7 +9,7 @@ CFLAGS = -g -Wall -O0
 all: $(PROG)
 
 $(PROG): $(PROG).o options.o algorithms.o mathops.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 $(PROG).o: $(PROG).c options.h algorithms.h mathops.h
 	$(CC) $(CFLAGS) -o $@ -c $<
