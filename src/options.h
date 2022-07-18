@@ -5,6 +5,23 @@
 #ifndef OPTIONS_H___
 #define OPTIONS_H___
 
+typedef struct _Options {
+  char *str_nums;
+  char *str_total;
+  char *str_mathops;
+  size_t str_nums_len;
+  size_t str_total_len;
+  size_t str_mathops_len;
+  long *nums;
+  long total;
+  char *mathops;
+  size_t nums_len;
+  size_t mathops_len;
+} options_t;
+
+static char *valid_mathops = "+-x/";
+static size_t max_nums_len = 20;
+
 static const char *ERR_PROGNAME = "Invalid program name: %s.";
 static const char *ERR_TOTAL = "Invalid '-t' option";
 static const char *ERR_FIRST_NUMS = "Invalid first number in '-n' option";
@@ -29,22 +46,6 @@ static const char *ERR_X1 = "You must use only one '-t' option, apart "
 static const char *MSG_USAGE_1 = "Usage example:";
 static const char *MSG_USAGE_2 = "-n 1,2,3,4 -t 12";
 static const char *MSG_USAGE_3 = "[-o +-x/]";
-
-typedef struct _Options {
-  char *str_nums;
-  char *str_total;
-  char *str_mathops;
-  size_t str_nums_len;
-  size_t str_total_len;
-  size_t str_mathops_len;
-  long *nums;
-  long total;
-  char *mathops;
-  size_t nums_len;
-  size_t mathops_len;
-} options_t;
-
-static char *valid_mathops = "+-x/";
 
 int get_options(int *pargc, char **argv, options_t *opts);
 int get_str_options(int *pargc, char **argv, options_t *opts);

@@ -119,5 +119,29 @@ int next_lnums_permutation(long *nums, size_t len)
   return 1;
 }
 
+// Number of permutations with repetition of 'nums' elements
+size_t pwr_count(long *nums, size_t nums_len)
+{
+  size_t pwr = factorial_table[nums_len];
+  long num = nums[0];
+  size_t count = 1;
+  for (size_t i = 1; i < nums_len; i++) {
+    if (num == nums[i]) {
+      count ++;
+    } else {
+      if (count != 1) {
+	pwr /= factorial_table[count];
+	count = 1;
+      } 
+      num = nums[i];
+    }
+  }
+
+  if (count != 1) {
+    pwr /= count;
+  }
+  
+    return pwr;
+}
 
 

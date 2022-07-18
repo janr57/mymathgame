@@ -28,6 +28,10 @@ int try_mathops(mathgame_t *mg)
   // For each permutation try every possible combination of math operations
   int ret;
   ret = first_lnums_permutation(nums, mg->nums_len);
+  // Number of different permutations with repetition of 'nums'
+  size_t nums_pwr_count = pwr_count(nums, mg->nums_len);
+  
+  printf("nums permutations: %lu\n", nums_pwr_count);
   print_nums(nums, mg->nums_len);
   // Generate first mathops_item string
   first_ops_item(ops_item, len, mg->mathops, mg->mathops_len);
