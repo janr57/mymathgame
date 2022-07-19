@@ -122,7 +122,6 @@ int get_str_options(int *argc, char **argv, options_t *opts)
 
 int get_real_options(options_t *opts)
 {
-  //int errcode;
   opts->nums_len = count_numbers(opts->str_nums);
   opts->nums = malloc(opts->nums_len * sizeof(long));
 
@@ -170,36 +169,6 @@ int get_real_options(options_t *opts)
     }
     *p++ = atol(token);
   }
-
-  /*
-  // Frequency table of nums
-  // In order to count how many permutations with repetitions do we have
-  // Copy array 'mg->nums' into 'nums'
-  // Reserve memory for the array
-  long *nums = malloc(opts->nums_len * sizeof(long));
-  for (size_t i=0; i<opts->nums_len; i++) {
-    nums[i] = opts->nums[i];
-  }
-  // We start sorting the copy of the numbers
-  int ret;
-  ret = first_lnums_permutation(nums, opts->nums_len);
-  // Find how many different numbers do we have
-  size_t count = 1;
-  long num = nums[0];
-  for (size_t i = 1; i < opts->nums_len; i++) {
-    if (num != nums[i]) {
-      count++;
-      num = nums[i];
-    }
-  }
-  // So we have 'count' different numbers
-  num = nums[0];
-  for (size_t i = 1; i < opts->nums_len; i++) {
-    
-  }
-  */
-  
-
 
   // Convert 'str_total' to long, provided it contains only digits
   pstr = opts->str_total;

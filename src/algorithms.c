@@ -31,7 +31,7 @@ int first_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len
     ops_item[i] = mathops[0];
   }
   
-  return 0;
+  return 1;
 }
 
 int next_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len)

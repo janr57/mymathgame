@@ -23,16 +23,32 @@ int try_mathops(mathgame_t *mg)
   
   // Copy array 'mg->mathops' into 'mathops'
   // Reserve memory for the string
-  size_t ops_len = nums_len - 1;
-  char *ops = malloc(1 + ops_len);
+  mg->ops_item_len = nums_len - 1;
+  char *ops = malloc(1 + mg->ops_item_len);
 
-  int ret;
-  // Start, both nums and ops
+  // Calculate number of different permutations with repetition of 'nums'
+  mg->nums_perm_rep = pwr_count(nums, mg->nums_len); 
+  // Calculate number of different variations with repetition of 'ops'
+  mg->ops_var_rep = pow(mg->mathops_len, mg->ops_item_len);
+  // Calculate number of jobs
+  mg->jobs_count = mg->nums_perm_rep * mg->ops_var_rep;
+
+  // Print above calculations
+  printf("Numerical permutations: %lu\n", mg->nums_perm_rep);
+  printf("Number of variations of operations: %lu\n",mg-> ops_var_rep);
+  printf("Number of jobs: %lu\n", mg->nums_perm_rep * mg->ops_var_rep);
+
+  // Start both, nums and ops
   int sn = 1;
   int so = 1;
-  // Produce permutation of 'nums' and 'ops_item' variations with repetitions
-  while ((ret = pwr_varwr(&sn, &so, nums,  ops, ops_len, mg)) != 0) {
-    //print_job(nums, nums_len, ops, ops_len);
+  int retnums, retops;
+  size_t job_no = 1;
+  // Produce jobs to calculate and compare with total
+  while ((retnums = nums_perm_rep(&sn, nums, mg)) != 0) {
+    while ((retops = ops_var_rep(&so, ops, mg)) != 0) {
+      print_job(job_no, nums, ops, mg);
+      job_no++;
+    }
   }
 
   free(nums);
@@ -41,35 +57,40 @@ int try_mathops(mathgame_t *mg)
   return 0;
 }
 
-int pwr_varwr(int *sn, int *so, long *nums, char *ops, size_t ops_len, mathgame_t *mg)
+// Produce permutations with repetition of 'nums, as a list,
+// one at a time
+int nums_perm_rep(int *sn, long *nums, mathgame_t *mg)
 {
   int retnums = 1;
-  int retops = 1;
-
+  
   if (*sn == 1) {
-    if ((retnums = first_lnums_permutation(nums, mg->nums_len)) != 0) {
-      *sn = 0;
-      // Calculate number of different permutations with repetition of 'nums'
-      size_t nums_pwr_count = pwr_count(nums, mg->nums_len);
-      // Calculate number of different variations with repetition of 'ops'
-      size_t ops_varr_count = pow(mg->mathops_len, ops_len);
-      printf("Numerical permutations: %lu\n", nums_pwr_count);
-      printf("Number of variations of operations: %lu\n", ops_varr_count);
-      printf("Number of jobs: %lu\n", nums_pwr_count * ops_varr_count);
-      retops = varwr(so, ops, ops_len, mg);
-      *so = (retops == 0) ? 1 : 0;
-    }
-  } else if (*so == 0) {
-    // Más operaciones y mantener números
-    retops = varwr(so, ops, ops_len, mg);
-    *so = (retops == 0) ? 1 : 0;
-  } else if (retnums != 0) {
+    retnums = first_lnums_permutation(nums, mg->nums_len);
+    *sn = 0;
+  } else if (*sn == 0) {
     retnums = next_lnums_permutation(nums, mg->nums_len);
-    retops = varwr(so, ops, ops_len, mg);
-    *so = (retops == 0) ? 1 : 0;
   }
   
   return retnums;
+}
+
+// Produce variations with repetition of mathematical operations as a list,
+// one at a time
+int ops_var_rep(int *so, char *ops, mathgame_t *mg)
+{
+  int retops = 1;
+
+  if (*so == 1) {
+    retops = first_ops_item(ops, mg->ops_item_len, mg->mathops, mg->mathops_len);
+    *so = 0;
+  } else if (*so == 0) {
+    retops = next_ops_item(ops, mg->ops_item_len, mg->mathops, mg->mathops_len);
+  }
+
+  if (retops == 0) {
+    *so = 1;
+  }
+
+  return retops;
 }
 
 int varwr(int *so, char *ops, size_t ops_len, mathgame_t *mg)
@@ -90,62 +111,36 @@ int varwr(int *so, char *ops, size_t ops_len, mathgame_t *mg)
   }
 }
 
-void print_job(long *nums, size_t nums_len, char *ops, size_t ops_len)
+void print_nums_item(long *nums, size_t nums_len)
 {
-  print_nums(nums, nums_len);
-  printf(" %s\n", ops);
-}
-
-  /*
-  // Produce permutations of numbers
-  // For each permutation try every possible combination of math operations
-  
-  int ret;
-  ret = first_lnums_permutation(nums, mg->nums_len);
-  // Number of different permutations with repetition of 'nums'
-  size_t nums_pwr_count = pwr_count(nums, mg->nums_len);
-  printf("nums permutations: %lu\n", nums_pwr_count);
-  print_nums(nums, mg->nums_len);
-  // Generate first mathops_item string
-  first_ops_item(ops_item, len, mg->mathops, mg->mathops_len);
-  printf("Maths operation [ 1]: %s\n", ops_item);
-  // Generate the rest mathops_items
-  int i = 1;
-  int val;
-  while ((val = next_ops_item(ops_item, len, mg->mathops, mg->mathops_len)) == 1) {
-    printf("Maths operation [%2d]: %s\n", i, ops_item);
-    i++;
-  }
-
-  while ((ret = next_lnums_permutation(nums, mg->nums_len)) != 0) {
-    print_nums(nums, mg->nums_len);
-    // Generate first mathops_item string
-    first_ops_item(ops_item, len, mg->mathops, mg->mathops_len);
-    printf("Math maths operation item [ 1]: %s\n", ops_item);
-    // Generate the rest mathops_items
-    int i = 1;
-    int val;
-    while ((val = next_ops_item(ops_item, len, mg->mathops, mg->mathops_len)) == 1) {
-      printf("Next maths operation item [%2d]: %s\n", i, ops_item);
-      i++;
+  printf("[");
+  for (size_t i = 0; i < nums_len; i++) {
+    printf("%ld", nums[i]);
+    if (i != nums_len - 1) {
+      printf(",");
     }
   }
-  */
+  printf("]");
+}
 
-  /*
-  // Generate first mathops_item
-  // Reserve memory for the string
-  size_t len = mg->nums_len - 1;
-  char *ops_item = malloc(1 + len);
-  first_ops_item(ops_item, len, mg->mathops, mg->mathops_len);
-  printf("Math maths operation item [ 0]: %s\n", ops_item);
+void print_ops_item(char *ops)
+{
+  printf("%s\n", ops);
+}
+
+void print_job(size_t job_no, long *nums, char *ops, mathgame_t *mg)
+{
+  char format_string[] = "%\0\0\0\0\0";
+  //int digits_no = ceil(log(mg->jobs_count)/log(10));
+  int digits_no = 1 + (int) (log(mg->jobs_count)/log(10));
+  int written_digits = snprintf(format_string + 1, digits_no + 1, "%d", digits_no);
+  int pos = (written_digits == 1) ? 2 : 3;
+  format_string[pos] = 'd';
   
-  // Generate the rest mathops_items
-  int i = 1;
-  int val;
-  while ((val = next_ops_item(ops_item, len, mg->mathops, mg->mathops_len)) == 1) {
-    printf("Next maths operation item [%2d]: %s\n", i, ops_item);
-    i++;
-  }
-  */
+  printf(format_string, job_no);
+  printf(" -> ");
+  print_nums_item(nums, mg->nums_len);
+  printf(" ");
+  print_ops_item(ops);
+}
 
