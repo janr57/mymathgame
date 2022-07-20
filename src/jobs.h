@@ -1,9 +1,9 @@
 /*
- * mathops.h
+ * jobs.h
  */
 
-#ifndef MATHOPS_H___
-#define MATHOPS_H___
+#ifndef JOBS_H___
+#define JOBS_H___
 
 typedef struct _Mathgame {
   long total;
@@ -20,19 +20,20 @@ typedef struct _Mathgame {
 typedef struct _Job {
   size_t job_no;
   long total;
-  long nums;
+  long *nums_item;
   char *ops_item;
-  size_t *ops_item_len;
+  size_t ops_item_len;
   int result;
   int success;
 } job_t;
 
-int try_mathops(mathgame_t *mg);
+int produce_jobs(mathgame_t *mg);
 int nums_perm_rep(int *sn, long *nums, mathgame_t *mg);
 int ops_var_rep(int *so, char *ops, mathgame_t *mg);
+job_t *create_job(size_t job_no, long *nums, char *ops, mathgame_t *mg); 
 void print_nums_item(long *nums, size_t nums_len);
 void print_ops_item(char *ops);
-void print_job(size_t job_no, long *nums, char *ops, mathgame_t *mg);
+void print_job(job_t *job, mathgame_t *mg);
 
-#endif /* MATHOPS_H___ */
+#endif /* JOBS_H___ */
 

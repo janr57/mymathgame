@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "options.h"
 #include "algorithms.h"
-#include "mathops.h"
+#include "options.h"
+#include "jobs.h"
 
 void fill_mathgame_struct(mathgame_t *mg, options_t *opts)
 {
@@ -24,19 +24,20 @@ void fill_mathgame_struct(mathgame_t *mg, options_t *opts)
 int main(int argc, char **argv)
 {
   options_t opts;
-  int errcode;
+  int retcode;
   /* Deal with options passed as program arguments */
-  if ((errcode = get_options(&argc, argv, &opts)) == -1) {
+  if ((retcode = get_options(&argc, argv, &opts)) == -1) {
     return -1;
   }
   print_options_summary(&opts);
 
   mathgame_t mg;
   fill_mathgame_struct(&mg, &opts);
-  if ((errcode = try_mathops(&mg)) == -1) {
+  if ((retcode = produce_jobs(&mg)) == -1) {
     return -1;
   }
 
+  //free_mathgame(&mg);
   free_options(&opts);
   
   return 0;

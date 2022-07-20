@@ -8,10 +8,10 @@ CFLAGS = -g -Wall -O0
 
 all: $(PROG)
 
-$(PROG): $(PROG).o options.o algorithms.o mathops.o
+$(PROG): $(PROG).o algorithms.o options.o jobs.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
-$(PROG).o: $(PROG).c options.h algorithms.h mathops.h
+$(PROG).o: $(PROG).c algorithms.h options.h jobs.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 options.o: options.c options.h
@@ -20,7 +20,7 @@ options.o: options.c options.h
 algorithms.o: algorithms.c algorithms.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-mathops.o: mathops.c mathops.h
+mathops.o: jobs.c jobs.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 .PHONY: clean

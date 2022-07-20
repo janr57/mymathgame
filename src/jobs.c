@@ -9,25 +9,25 @@
 #include <math.h>
 
 #include "algorithms.h"
-#include "mathops.h"
+#include "jobs.h"
 
-int try_mathops(mathgame_t *mg)
+int produce_jobs(mathgame_t *mg)
 {
   // Copy array 'mg->nums' into 'nums'
   // Reserve memory for the array
-  long *nums = malloc(mg->nums_len * sizeof(long));
+  long *nums_item = malloc(mg->nums_len * sizeof(long));
   for (size_t i=0; i<mg->nums_len; i++) {
-    nums[i] = mg->nums[i];
+    nums_item[i] = mg->nums[i];
   }
   size_t nums_len = mg->nums_len;
   
   // Copy array 'mg->mathops' into 'mathops'
   // Reserve memory for the string
   mg->ops_item_len = nums_len - 1;
-  char *ops = malloc(1 + mg->ops_item_len);
+  char *ops_item = malloc(1 + mg->ops_item_len);
 
   // Calculate number of different permutations with repetition of 'nums'
-  mg->nums_perm_rep = pwr_count(nums, mg->nums_len); 
+  mg->nums_perm_rep = pwr_count(nums_item, mg->nums_len); 
   // Calculate number of different variations with repetition of 'ops'
   mg->ops_var_rep = pow(mg->mathops_len, mg->ops_item_len);
   // Calculate number of jobs
@@ -43,19 +43,67 @@ int try_mathops(mathgame_t *mg)
   int so = 1;
   int retnums, retops;
   size_t job_no = 1;
+  job_t *job = NULL;
   // Produce jobs to calculate and compare with total
-  while ((retnums = nums_perm_rep(&sn, nums, mg)) != 0) {
-    while ((retops = ops_var_rep(&so, ops, mg)) != 0) {
-      print_job(job_no, nums, ops, mg);
+  while ((retnums = nums_perm_rep(&sn, nums_item, mg)) != 0) {
+    while ((retops = ops_var_rep(&so, ops_item, mg)) != 0) {
+      job = create_job(job_no, nums_item, ops_item, mg); 
+      //print_job(job_no, nums_item, ops_item, mg);
+      print_job(job, mg);
       job_no++;
+      free(job->nums_item);
+      free(job->ops_item);
+      free(job);
     }
   }
 
-  free(nums);
-  free(ops);
+  free(nums_item);
+  free(ops_item);
   
   return 0;
 }
+
+job_t *create_job(size_t job_no, long *nums, char *ops, mathgame_t *mg)
+{
+  /*
+  // Copy 'nums'
+  long *nums_copy = malloc(mg->nums_len * sizeof(long));
+  for (size_t i = 0; i < mg->nums_len; i++) {
+    nums_copy[i] = nums[i];
+  }
+
+  // Copy 'ops'
+  char *ops_copy = malloc(1 + mg->ops_item_len * sizeof(char));
+  snprintf(ops_copy, 1 + mg->ops_item_len, "%s", ops);
+
+  printf("COPY: %s\n", ops_copy);
+  */
+  
+  job_t *job = malloc(sizeof(job_t));
+  job->job_no = job_no;
+  job->total = mg->total;
+  job->nums_item = malloc(mg->nums_len * sizeof(long));
+  for (size_t i = 0; i < mg->nums_len; i++) {
+    job->nums_item[i] = nums[i];
+  };
+  job->ops_item = malloc(1 + mg->nums_len * sizeof(char));
+  snprintf(job->ops_item, 1 + mg->ops_item_len, "%s", ops);
+
+  return job;
+}
+
+/*
+typedef struct _Job {
+  size_t job_no;
+  long total;
+  long nums;
+  char *ops_item;
+  size_t *ops_item_len;
+  int result;
+  int success;
+} job_t;
+*/
+
 
 // Produce permutations with repetition of 'nums, as a list,
 // one at a time
@@ -93,24 +141,6 @@ int ops_var_rep(int *so, char *ops, mathgame_t *mg)
   return retops;
 }
 
-int varwr(int *so, char *ops, size_t ops_len, mathgame_t *mg)
-{
-  int ret;
-  if (*so == 0) {
-    ret = next_ops_item(ops, ops_len, mg->mathops, mg->mathops_len);
-    if (ret == 0) {
-      *so = 1;
-    }
-    return ret;
-  } else {
-    // Generate first mathops_item string
-    ret = 1;
-    first_ops_item(ops, ops_len, mg->mathops, mg->mathops_len);
-    *so = 0;
-    return ret;
-  }
-}
-
 void print_nums_item(long *nums, size_t nums_len)
 {
   printf("[");
@@ -128,19 +158,18 @@ void print_ops_item(char *ops)
   printf("%s\n", ops);
 }
 
-void print_job(size_t job_no, long *nums, char *ops, mathgame_t *mg)
+void print_job(job_t *job, mathgame_t *mg)
 {
   char format_string[] = "%\0\0\0\0\0";
-  //int digits_no = ceil(log(mg->jobs_count)/log(10));
   int digits_no = 1 + (int) (log(mg->jobs_count)/log(10));
   int written_digits = snprintf(format_string + 1, digits_no + 1, "%d", digits_no);
   int pos = (written_digits == 1) ? 2 : 3;
   format_string[pos] = 'd';
   
-  printf(format_string, job_no);
-  printf(" -> ");
-  print_nums_item(nums, mg->nums_len);
+  printf(format_string, job->job_no);
+  printf(": ");
+  print_nums_item(job->nums_item, mg->nums_len);
   printf(" ");
-  print_ops_item(ops);
+  print_ops_item(job->ops_item);
 }
 
