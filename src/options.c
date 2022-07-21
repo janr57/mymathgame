@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#include "messages.h"
 #include "algorithms.h"
 #include "options.h"
 
@@ -50,10 +51,11 @@ int get_str_options(int *argc, char **argv, options_t *opts)
     return -1;
   }
 
-  int nflags = 0, tflags = 0, oflags = 0;
+  int nflags, tflags, oflags, fflags;
+  nflags = tflags = oflags = fflags = 0;
   int ch;
 
-  while ((ch = getopt(*argc, argv, "n:t:o:")) != -1) {
+  while ((ch = getopt(*argc, argv, "n:t:o:f::")) != -1) {
     switch (ch) {
     case 'n':
       nflags++;
@@ -73,6 +75,11 @@ int get_str_options(int *argc, char **argv, options_t *opts)
       opts->str_mathops = malloc(1 + opts->str_mathops_len);
       strncpy(opts->str_mathops, optarg, opts->str_mathops_len);
       break;
+    case 'f':
+      fflags ++;
+      opts->str_filename_len = strlen(optarg);
+      opts->str_filename = malloc(1 + opts->str_filename_len);
+      strncpy(opts->str_filename, optarg, opts->str_filename_len);
     default:
       usage(argv[0]);
       break;
@@ -130,7 +137,7 @@ int get_real_options(options_t *opts)
   // Fill the opts->nums array from opts->str_nums
   char *pstr = opts->str_nums;
   long *p = opts->nums;
-  //pstr = opts->str_nums;
+  
   // Make sure that the first character of opts->str_nums is a digit
   // (a comma cannot appear as a first character)
   char ch = *opts->str_nums;
@@ -219,7 +226,13 @@ int get_real_options(options_t *opts)
     strncpy(opts->mathops, opts->str_mathops, opts->str_mathops_len);
   }
   opts->mathops_len = strlen(opts->mathops);
-  
+
+  // Check whether the user asked for a particular file name or not
+  if (opts->str_filename_len == 0) {
+    opts->filename = file_with_timestamp("mathgame_", ".log");
+  }
+  opts->filename_len = strlen(opts->filename);
+
   return 0;
 }
 

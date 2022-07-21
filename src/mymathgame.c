@@ -17,8 +17,10 @@ void fill_mathgame_struct(mathgame_t *mg, options_t *opts)
   mg->total = opts->total;
   mg->nums = opts->nums;
   mg->mathops = opts->mathops;
+  mg->filename = opts->filename;
   mg->nums_len = opts->nums_len;
   mg->mathops_len = opts->mathops_len;
+  mg->filename_len = opts->filename_len;
 }
 
 int main(int argc, char **argv)
@@ -37,7 +39,6 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  //free_mathgame(&mg);
   free_options(&opts);
   
   return 0;

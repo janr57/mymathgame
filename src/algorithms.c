@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "algorithms.h"
 
@@ -142,6 +143,25 @@ size_t pwr_count(long *nums, size_t nums_len)
   }
   
     return pwr;
+}
+
+/*
+ Returns the current time.
+*/
+char *file_with_timestamp(char *name, char *ext)
+{
+  //char *name = "mathgame_";
+  //char *ext = ".log";
+  
+  char *filename = malloc(strlen(name) + sizeof(char) * 16 + strlen(ext));
+  time_t ltime = time(NULL);
+  struct tm *tm;
+  tm = localtime(&ltime);
+
+  sprintf(filename, "%s%04d%02d%02d%02d%02d%02d%s", name, tm->tm_year+1900,
+	  tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, ext);
+  
+  return filename;
 }
 
 void rat_init(rational_t *r, long n, long d)

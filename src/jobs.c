@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "messages.h"
 #include "algorithms.h"
 #include "jobs.h"
 
@@ -41,14 +42,16 @@ int produce_jobs(mathgame_t *mg)
   // Start both, nums and ops
   int sn = 1;
   int so = 1;
-  int retnums, retops;
+  int retnums, retops, retjob;
   size_t job_no = 1;
   job_t *job = NULL;
   // Produce jobs to calculate and compare with total
   while ((retnums = nums_perm_rep(&sn, nums_item, mg)) != 0) {
     while ((retops = ops_var_rep(&so, ops_item, mg)) != 0) {
-      job = create_job(job_no, nums_item, ops_item, mg); 
-      //print_job(job_no, nums_item, ops_item, mg);
+      job = create_job(job_no, nums_item, ops_item, mg);
+      if ((retjob = calculate_job(job)) == -1) {
+	fprintf(stderr, "%s: %lu\n", ERR_JOB_CALC, job->job_no);
+      }
       print_job(job, mg);
       job_no++;
       free(job->nums_item);
@@ -65,20 +68,6 @@ int produce_jobs(mathgame_t *mg)
 
 job_t *create_job(size_t job_no, long *nums, char *ops, mathgame_t *mg)
 {
-  /*
-  // Copy 'nums'
-  long *nums_copy = malloc(mg->nums_len * sizeof(long));
-  for (size_t i = 0; i < mg->nums_len; i++) {
-    nums_copy[i] = nums[i];
-  }
-
-  // Copy 'ops'
-  char *ops_copy = malloc(1 + mg->ops_item_len * sizeof(char));
-  snprintf(ops_copy, 1 + mg->ops_item_len, "%s", ops);
-
-  printf("COPY: %s\n", ops_copy);
-  */
-  
   job_t *job = malloc(sizeof(job_t));
   job->job_no = job_no;
   job->total = mg->total;
@@ -86,31 +75,27 @@ job_t *create_job(size_t job_no, long *nums, char *ops, mathgame_t *mg)
   for (size_t i = 0; i < mg->nums_len; i++) {
     job->nums_item[i] = nums[i];
   };
+  job->nums_item_len = mg->nums_len;
   job->ops_item = malloc(1 + mg->nums_len * sizeof(char));
   snprintf(job->ops_item, 1 + mg->ops_item_len, "%s", ops);
-
+  job->filename = malloc(1 + mg->filename_len * sizeof(char));
+  snprintf(job->filename, 1 + mg->filename_len, "%s", mg->filename);
+  job->filename_len = mg->filename_len;
   return job;
 }
 
-/*
-typedef struct _Job {
-  size_t job_no;
-  long total;
-  long nums;
-  char *ops_item;
-  size_t *ops_item_len;
-  int result;
-  int success;
-} job_t;
-*/
+int calculate_job(job_t *job)
+{
 
+  return 0;
+}
 
 // Produce permutations with repetition of 'nums, as a list,
 // one at a time
 int nums_perm_rep(int *sn, long *nums, mathgame_t *mg)
 {
   int retnums = 1;
-  
+ 
   if (*sn == 1) {
     retnums = first_lnums_permutation(nums, mg->nums_len);
     *sn = 0;

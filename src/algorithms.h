@@ -19,6 +19,8 @@ int first_lnums_permutation(long *nums, size_t len);
 int next_lnums_permutation(long *nums, size_t len);
 size_t pwr_count(long *nums, size_t len);
 
+char *file_with_timestamp(char *name, char *ext);
+
 typedef struct _Rational {
   long num;
   long den;
