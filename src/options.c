@@ -129,6 +129,29 @@ int get_str_options(int *argc, char **argv, options_t *opts)
 
 int get_real_options(options_t *opts)
 {
+  int ret;
+  
+  if ((ret = get_real_nums(opts)) == -1) {
+    return -1;
+  }
+
+  if ((ret = get_real_total(opts)) == -1) {
+    return -1;
+  }
+
+  if ((ret = get_real_mathops(opts)) == -1) {
+    return -1;
+  }
+
+    if ((ret = get_real_filename(opts)) == -1) {
+    return -1;
+  }
+  
+  return 0;
+}
+
+int get_real_nums(options_t *opts)
+{
   opts->nums_len = count_numbers(opts->str_nums);
   opts->nums = malloc(opts->nums_len * sizeof(long));
 
@@ -177,18 +200,33 @@ int get_real_options(options_t *opts)
     *p++ = atol(token);
   }
 
+  free(str_nums_copy);
+
+  return 0;
+}
+
+int get_real_total(options_t *opts)
+{
+  char *pstr;
+  char ch;
   // Convert 'str_total' to long, provided it contains only digits
   pstr = opts->str_total;
   while ((ch = *pstr++) != '\0') {
     if (!isdigit(ch)) {
       fprintf(stderr, "%s: %s\n", ERR_TOTAL, opts->str_total);
       free_options(opts);
-      free(str_nums_copy);
       return -1;
     }
   }
   opts->total = atol(opts->str_total);
 
+  return 0;
+}
+
+int get_real_mathops(options_t *opts)
+{
+  char *pstr;
+  char ch;    
   // Check opts->str_mathops.
   pstr = opts->str_mathops;
   if (pstr != NULL) {
@@ -200,7 +238,6 @@ int get_real_options(options_t *opts)
       i = find_string(valid_mathops, ch);
       if (i == -1) {
 	fprintf(stderr, "%s: %c\n", ERR_INVALID_OP, ch);
-	free(str_nums_copy);
 	free_options(opts);
 	return -1;
       }
@@ -210,13 +247,13 @@ int get_real_options(options_t *opts)
       while ((ch2 = *pstr2++) != '\0') {
 	if (ch == ch2) {
 	  fprintf(stderr, "%s: %c\n", ERR_REPEATED_OP, ch);
-	  free(str_nums_copy);
 	  free_options(opts);
 	  return -1;
 	}
       }
     }
   }
+  
   // All valid mathops in opts->mathops in case the user does not specify them
   if (opts->str_mathops == NULL) {
     opts->mathops = malloc(1 + strlen(valid_mathops));
@@ -225,8 +262,13 @@ int get_real_options(options_t *opts)
     opts->mathops = malloc(1 + opts->str_mathops_len);
     strncpy(opts->mathops, opts->str_mathops, opts->str_mathops_len);
   }
-  opts->mathops_len = strlen(opts->mathops);
+  opts->mathops_len = strlen(opts->mathops);  
+  
+  return 0;
+}
 
+int get_real_filename(options_t *opts)
+{
   // Check whether the user asked for a particular file name or not
   if (opts->str_filename_len == 0) {
     opts->filename = file_with_timestamp("mathgame_", ".log");
