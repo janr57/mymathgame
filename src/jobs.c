@@ -76,8 +76,9 @@ job_t *create_job(size_t job_no, long *nums, char *ops, mathgame_t *mg)
     job->nums_item[i] = nums[i];
   };
   job->nums_item_len = mg->nums_len;
-  job->ops_item = malloc(1 + mg->nums_len * sizeof(char));
+  job->ops_item = malloc(1 + mg->ops_item_len * sizeof(char));
   snprintf(job->ops_item, 1 + mg->ops_item_len, "%s", ops);
+  job->ops_item_len = mg->ops_item_len;
   job->filename = malloc(1 + mg->filename_len * sizeof(char));
   snprintf(job->filename, 1 + mg->filename_len, "%s", mg->filename);
   job->filename_len = mg->filename_len;
@@ -86,8 +87,63 @@ job_t *create_job(size_t job_no, long *nums, char *ops, mathgame_t *mg)
 
 int calculate_job(job_t *job)
 {
+  double acum = 0;
+  char op;
+  
+  // Initial calculation
+  op = job->ops_item[0];
+  if (op == '+') {
+    acum = job->nums_item[0] + job->nums_item[1];
+  } else if (op == '-') {
+    acum = job->nums_item[0] - job->nums_item[1];
+  } else if (op == '*') {
+    acum = job->nums_item[0] * job->nums_item[1];
+  } else if (op == '/') {
+    acum = job->nums_item[0] / job->nums_item[1];
+  }
+
+  for (size_t i = 1; i < job->ops_item_len; i++) {
+    op = job->ops_item[i];
+    if (op == '+') {
+      acum += job->nums_item[i+1];
+    } else if (op == '-') {
+      acum -= job->nums_item[i+1];
+    } else if (op == '*') {
+      acum *= job->nums_item[i+1];
+    } else if (op == '/') {
+      acum /= job->nums_item[i+1];
+    }
+  }
+
+  job->result = acum;
+
+  if (job->result == job->total) {
+    job->success = 1;
+  } else {
+    job->success = 0;
+  }
 
   return 0;
+}
+
+double add(double a, double b)
+{
+  return a + b;
+}
+
+double substract(double a, double b)
+{
+  return a - b;
+}
+
+double multiply(double a, double b)
+{
+  return a * b;
+}
+
+double divide(double a, double b)
+{
+  return a/b;
 }
 
 // Produce permutations with repetition of 'nums, as a list,
@@ -140,7 +196,7 @@ void print_nums_item(long *nums, size_t nums_len)
 
 void print_ops_item(char *ops)
 {
-  printf("%s\n", ops);
+  printf("%s", ops);
 }
 
 void print_job(job_t *job, mathgame_t *mg)
@@ -156,5 +212,11 @@ void print_job(job_t *job, mathgame_t *mg)
   print_nums_item(job->nums_item, mg->nums_len);
   printf(" ");
   print_ops_item(job->ops_item);
+  if (job->success == 1) {
+    printf(" -> SUCCESS ");
+  } else {
+    printf(" -> ------- ");
+  }
+  printf(" %g\n", job->result);
 }
 

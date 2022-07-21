@@ -23,7 +23,7 @@ typedef struct _Options {
   size_t filename_len;
 } options_t;
 
-static char *valid_mathops = "+-x/";
+static char *valid_mathops = "+-*/";
 static size_t max_nums_len = 20;
 
 int get_options(int *pargc, char **argv, options_t *opts);

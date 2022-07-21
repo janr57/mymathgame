@@ -28,12 +28,16 @@ typedef struct _Job {
   size_t nums_item_len;
   size_t ops_item_len;
   size_t filename_len;
-  int result;
+  double result;
   int success;
 } job_t;
 
 int produce_jobs(mathgame_t *mg);
 int calculate_job(job_t *job);
+double add(double a, double b);
+double substract(double a, double b);
+double multiply(double a, double b);
+double divide(double a, double b);
 int nums_perm_rep(int *sn, long *nums, mathgame_t *mg);
 int ops_var_rep(int *so, char *ops, mathgame_t *mg);
 job_t *create_job(size_t job_no, long *nums, char *ops, mathgame_t *mg); 
