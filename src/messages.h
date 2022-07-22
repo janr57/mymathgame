@@ -5,11 +5,14 @@
 #ifndef MESSAGES_H___
 #define MESSAGES_H___
 
-static const char *ERR_JOB_CALC = "Error in calculation of job: ";
-static const char *ERR_PROGNAME = "Invalid program name: %s.";
+static const char *ERR_JOB_CALC = "Error in calculation of job";
+static const char *ERR_PROGNAME = "Invalid program name";
 static const char *ERR_TOTAL = "Invalid '-t' option";
 static const char *ERR_FIRST_NUMS = "Invalid first number in '-n' option";
+static const char *ERR_LAST_NUMS = "Invalid last number in '-n' option";
 static const char *ERR_CHAR_NUMS = "Invalid character in '-n' option string";
+static const char *ERR_SIGN_NUMS = "Invalid position of '+' or '-' signs in  '-n' option";
+static const char *ERR_ZERO_NUMS = "No zeros allowed in  '-n' option";
 static const char *ERR_NUMS = "Invalid '-n' option number";
 static const char *ERR_INVALID_OP = "Invalid mathematical operation";
 static const char *ERR_REPEATED_OP = "Repeated mathematical operation";

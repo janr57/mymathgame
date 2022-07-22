@@ -154,33 +154,54 @@ int get_real_nums(options_t *opts)
 {
   opts->nums_len = count_numbers(opts->str_nums);
   opts->nums = malloc(opts->nums_len * sizeof(long));
-
-  //Convert the list of strings to numbers
-  // Make sure that opts->str_nums has only digits and commas
-  // Fill the opts->nums array from opts->str_nums
-  char *pstr = opts->str_nums;
-  long *p = opts->nums;
   
-  // Make sure that the first character of opts->str_nums is a digit
-  // (a comma cannot appear as a first character)
+  // Make sure that the first and last character of opts->str_nums is a digit
+  // (a comma cannot appear at any one of both ends of the string)
   char ch = *opts->str_nums;
-  if (!isdigit(ch)) {
+  if ((!isdigit(ch)) && (ch != '+') && (ch != '-')) {
     fprintf(stderr, "%s %s\n", ERR_FIRST_NUMS, opts->str_nums);
     free_options(opts);
     return -1;
   }
+
+  ch = *(opts->str_nums + (opts->str_nums_len - 1));
+  if (!isdigit(ch)) {
+    fprintf(stderr, "%s %s\n", ERR_LAST_NUMS, opts->str_nums);
+    free_options(opts);
+    return -1;
+  }
   
-  // We've already tested the first character, so we begin from the second
-  // Digits and commas are permitted
-  for (int i = 1; i < opts->str_nums_len; i++) {
-    ch = *pstr;
-    if ((!isdigit(ch) && (ch != ','))) {
+  // We've already tested the first and last character, so we begin from the
+  // second.
+  // Digits  and commas are permitted.
+  // Furthermore, positive and negagive signs are permitted:
+  // - As a first character of the string.
+  // - As a character following a comma.
+  // No zeros are allowed.
+
+  // Make sure that opts->str_nums has only digits, commas or '+' or '-' signs
+  char *pstr = opts->str_nums;
+  for (size_t i = 1; i < opts->str_nums_len - 1; i++) {
+    ch = pstr[i];
+    if ((!isdigit(ch)) && (ch != ',') && (ch != '+') && (ch != '-')) {
       fprintf(stderr, "%s: %c in %s\n", ERR_CHAR_NUMS, ch, opts->str_nums);
       free_options(opts);
       return -1;
     }
   }
 
+  // Search for '+' and '-' signs
+  for (size_t i = 1; i < opts->str_nums_len; i++) {
+    ch = pstr[i];
+    if (((ch == '+') || (ch == '-')) && pstr[i] != ',') {
+      fprintf(stderr, "%s: %c in %s\n", ERR_SIGN_NUMS, ch, opts->str_nums);
+      free_options(opts);
+      return -1;
+    } 
+  }
+
+  long *p = opts->nums;
+  //Convert the list of strings to numbers
   // Make a copy of opts->str_nums
   // extracting tokens from the string, changes the string.
   char *str_nums_copy = malloc(1 + opts->str_nums_len);
@@ -189,6 +210,9 @@ int get_real_nums(options_t *opts)
   char *token;
   while ((token = strtok_r(rest, ",", &rest))) {
     pstr = token;
+    if ((*pstr == '+') || (*pstr == '-')) {
+      pstr++;
+    }
     while ((ch = *pstr++) != '\0') {
       if (!isdigit(ch)) {
 	fprintf(stderr, "%s: %s\n", ERR_NUMS, token);
@@ -199,8 +223,14 @@ int get_real_nums(options_t *opts)
     }
     *p++ = atol(token);
   }
-
   free(str_nums_copy);
+
+  // No zeros allowed
+  for (size_t i = 0; i < opts->nums_len; i++) {
+    if (opts->nums[i] == 0) {
+      fprintf(stderr, "%s\n", ERR_ZERO_NUMS);
+    }
+  }
 
   return 0;
 }
