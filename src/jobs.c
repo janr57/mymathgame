@@ -1,5 +1,5 @@
 /*
- * mathops.c
+ * jobs.c
  *
  */
 
@@ -35,9 +35,9 @@ int produce_jobs(mathgame_t *mg)
   mg->jobs_count = mg->nums_perm_rep * mg->ops_var_rep;
 
   // Print above calculations
-  printf("Numerical permutations: %lu\n", mg->nums_perm_rep);
-  printf("Number of variations of operations: %lu\n",mg-> ops_var_rep);
-  printf("Number of jobs: %lu\n", mg->nums_perm_rep * mg->ops_var_rep);
+  printf("Numerical permutations: %zu\n", mg->nums_perm_rep);
+  printf("Number of variations of operations: %zu\n",mg-> ops_var_rep);
+  printf("Number of jobs: %zu\n", mg->nums_perm_rep * mg->ops_var_rep);
 
   // Start both, nums and ops
   int sn = 1;
@@ -50,7 +50,7 @@ int produce_jobs(mathgame_t *mg)
     while ((retops = ops_var_rep(&so, ops_item, mg)) != 0) {
       job = create_job(job_no, nums_item, ops_item, mg);
       if ((retjob = calculate_job(job)) == -1) {
-	fprintf(stderr, "%s: %lu\n", ERR_JOB_CALC, job->job_no);
+	fprintf(stderr, "%s: %zu\n", ERR_JOB_CALC, job->job_no);
       }
       print_job(job, mg);
       job_no++;

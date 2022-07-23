@@ -1,6 +1,7 @@
 /*
  * mymathgame.c
- * Get a certain number by doing any + - * / operation on some others.
+ * Get a certain number by doing any + - * / operation on some others,
+ * produced by the user.
  */
 
 #include <stdio.h>
@@ -43,4 +44,5 @@ int main(int argc, char **argv)
   
   return 0;
 }
+
 

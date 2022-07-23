@@ -348,7 +348,7 @@ void print_mathops(char *mathops)
 
 int print_options_summary(options_t *opts)
 {
-  printf("Numbers count: %lu\n", opts->nums_len);
+  printf("Numbers count: %zu\n", opts->nums_len);
   printf("Numbers: ");
   for (size_t i = 0; i < opts->nums_len; i++) {
     printf("%ld ", *(opts->nums + i));
