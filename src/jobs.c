@@ -12,7 +12,7 @@
 #include "algorithms.h"
 #include "jobs.h"
 
-int produce_jobs(mathgame_t *mg)
+int produce_jobs(mathgame_st *mg)
 {
   // Copy array 'mg->nums' into 'nums'
   // Reserve memory for the array
@@ -44,7 +44,7 @@ int produce_jobs(mathgame_t *mg)
   int so = 1;
   int retnums, retops, retjob;
   size_t job_no = 1;
-  job_t *job = NULL;
+  job_st *job = NULL;
   // Produce jobs to calculate and compare with total
   while ((retnums = nums_perm_rep(&sn, nums_item, mg)) != 0) {
     while ((retops = ops_var_rep(&so, ops_item, mg)) != 0) {
@@ -66,9 +66,9 @@ int produce_jobs(mathgame_t *mg)
   return 0;
 }
 
-job_t *create_job(size_t job_no, long *nums, char *ops, mathgame_t *mg)
+job_st *create_job(size_t job_no, long *nums, char *ops, mathgame_st *mg)
 {
-  job_t *job = malloc(sizeof(job_t));
+  job_st *job = malloc(sizeof(job_st));
   job->job_no = job_no;
   job->total = mg->total;
   job->nums_item = malloc(mg->nums_len * sizeof(long));
@@ -85,7 +85,7 @@ job_t *create_job(size_t job_no, long *nums, char *ops, mathgame_t *mg)
   return job;
 }
 
-int calculate_job(job_t *job)
+int calculate_job(job_st *job)
 {
   double acum = 0;
   char op;
@@ -148,7 +148,7 @@ double divide(double a, double b)
 
 // Produce permutations with repetition of 'nums, as a list,
 // one at a time
-int nums_perm_rep(int *sn, long *nums, mathgame_t *mg)
+int nums_perm_rep(int *sn, long *nums, mathgame_st *mg)
 {
   int retnums = 1;
  
@@ -164,7 +164,7 @@ int nums_perm_rep(int *sn, long *nums, mathgame_t *mg)
 
 // Produce variations with repetition of mathematical operations as a list,
 // one at a time
-int ops_var_rep(int *so, char *ops, mathgame_t *mg)
+int ops_var_rep(int *so, char *ops, mathgame_st *mg)
 {
   int retops = 1;
 
@@ -199,7 +199,7 @@ void print_ops_item(char *ops)
   printf("%s", ops);
 }
 
-void print_job(job_t *job, mathgame_t *mg)
+void print_job(job_st *job, mathgame_st *mg)
 {
   char format_string[] = "%\0\0\0\0\0";
   int digits_no = 1 + (int) (log(mg->jobs_count)/log(10));

@@ -13,7 +13,7 @@
 #include "algorithms.h"
 #include "options.h"
 
-int get_options(int *argc, char **argv, options_t *opts)
+int get_options(int *argc, char **argv, options_st *opts)
 {
   int errcode;
   
@@ -43,7 +43,7 @@ int get_options(int *argc, char **argv, options_t *opts)
  * -1: error
  *  0: Ok
  */
-int get_str_options(int *argc, char **argv, options_t *opts)
+int get_str_options(int *argc, char **argv, options_st *opts)
 {
   /* Expect at least four arguments */
   if ((*argc != 5) && (*argc != 7)) {
@@ -127,7 +127,7 @@ int get_str_options(int *argc, char **argv, options_t *opts)
   return 0;
 }
 
-int get_real_options(options_t *opts)
+int get_real_options(options_st *opts)
 {
   int ret;
   
@@ -150,10 +150,12 @@ int get_real_options(options_t *opts)
   return 0;
 }
 
-int get_real_nums(options_t *opts)
+int get_real_nums(options_st *opts)
 {
+  // Create opts->nums structure
   opts->nums_len = count_numbers(opts->str_nums);
   opts->nums = malloc(opts->nums_len * sizeof(long));
+  memset(opts->nums, 0, opts->nums_len * sizeof(long));
   
   // Make sure that the first and last character of opts->str_nums is a digit
   // (a comma cannot appear at any one of both ends of the string)
@@ -235,7 +237,7 @@ int get_real_nums(options_t *opts)
   return 0;
 }
 
-int get_real_total(options_t *opts)
+int get_real_total(options_st *opts)
 {
   char *pstr;
   char ch;
@@ -253,7 +255,7 @@ int get_real_total(options_t *opts)
   return 0;
 }
 
-int get_real_mathops(options_t *opts)
+int get_real_mathops(options_st *opts)
 {
   char *pstr;
   char ch;    
@@ -297,7 +299,7 @@ int get_real_mathops(options_t *opts)
   return 0;
 }
 
-int get_real_filename(options_t *opts)
+int get_real_filename(options_st *opts)
 {
   // Check whether the user asked for a particular file name or not
   if (opts->str_filename_len == 0) {
@@ -346,7 +348,7 @@ void print_mathops(char *mathops)
   printf("%s\n", mathops);
 }
 
-int print_options_summary(options_t *opts)
+int print_options_summary(options_st *opts)
 {
   printf("Numbers count: %zu\n", opts->nums_len);
   printf("Numbers: ");
@@ -359,7 +361,7 @@ int print_options_summary(options_t *opts)
   return 0;
 }
 
-void free_options(options_t *opts)
+void free_options(options_st *opts)
 {
   free(opts->str_nums);
   free(opts->str_total);

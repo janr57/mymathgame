@@ -13,7 +13,7 @@
 #include "options.h"
 #include "jobs.h"
 
-void fill_mathgame_struct(mathgame_t *mg, options_t *opts)
+void fill_mathgame_struct(mathgame_st *mg, options_st *opts)
 {
   mg->total = opts->total;
   mg->nums = opts->nums;
@@ -26,15 +26,16 @@ void fill_mathgame_struct(mathgame_t *mg, options_t *opts)
 
 int main(int argc, char **argv)
 {
-  options_t opts;
+  options_st opts;
   int retcode;
-  /* Deal with options passed as program arguments */
+  // Deal with options passed as program arguments
   if ((retcode = get_options(&argc, argv, &opts)) == -1) {
     return -1;
   }
   print_options_summary(&opts);
 
-  mathgame_t mg;
+  // Build and run actual calculations
+  mathgame_st mg;
   fill_mathgame_struct(&mg, &opts);
   if ((retcode = produce_jobs(&mg)) == -1) {
     return -1;

@@ -150,10 +150,7 @@ size_t pwr_count(long *nums, size_t nums_len)
 */
 char *file_with_timestamp(char *name, char *ext)
 {
-  //char *name = "mathgame_";
-  //char *ext = ".log";
-  
-  char *filename = malloc(strlen(name) + sizeof(char) * 16 + strlen(ext));
+  char *filename = malloc(1 + (strlen(name) + sizeof(char) * 16 + strlen(ext)));
   time_t ltime = time(NULL);
   struct tm *tm;
   tm = localtime(&ltime);
