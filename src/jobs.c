@@ -45,6 +45,8 @@ int produce_jobs(mathgame_st *mg)
   int retnums, retops, retjob;
   size_t job_no = 1;
   job_st *job = NULL;
+  mg->fp = fopen(mg->filename, "w");
+  fprintf(mg->fp, "job\tnums\tsuccess\tresult\n");
   // Produce jobs to calculate and compare with total
   while ((retnums = nums_perm_rep(&sn, nums_item, mg)) != 0) {
     while ((retops = ops_var_rep(&so, ops_item, mg)) != 0) {
@@ -53,6 +55,7 @@ int produce_jobs(mathgame_st *mg)
 	fprintf(stderr, "%s: %zu\n", ERR_JOB_CALC, job->job_no);
       }
       print_job(job, mg);
+      print_csv_filename(job, '\t');
       job_no++;
       free(job->nums_item);
       free(job->ops_item);
@@ -60,8 +63,9 @@ int produce_jobs(mathgame_st *mg)
     }
   }
 
-  free(nums_item);
-  free(ops_item);
+  fclose(mg->fp);
+  //free(nums_item);
+  //ree(ops_item);
   
   return 0;
 }
@@ -82,6 +86,7 @@ job_st *create_job(size_t job_no, long *nums, char *ops, mathgame_st *mg)
   job->filename = malloc(1 + mg->filename_len * sizeof(char));
   snprintf(job->filename, 1 + mg->filename_len, "%s", mg->filename);
   job->filename_len = mg->filename_len;
+  job->fp = mg->fp;
   return job;
 }
 
@@ -199,24 +204,47 @@ void print_ops_item(char *ops)
   printf("%s", ops);
 }
 
+void print_csv_filename(job_st *job, char separator) {
+  fprintf(job->fp, "%lu%c", job->job_no,separator);
+  for (int i = 0; i < job->nums_item_len; i++) {
+    fprintf(job->fp, "%ld", job->nums_item[i]);
+    if (i != job->nums_item_len - 1) {
+      fprintf(job->fp, ",");
+    }
+  }
+  fprintf(job->fp, "%c", separator);
+  
+  fprintf(job->fp, "%s%c", job->ops_item, separator);
+  
+  if (job->result == job->total) {
+    fprintf(job->fp, "SUCCESS%c", separator);
+  } else {
+    fprintf(job->fp, "-------%c", separator);
+  }
+  
+  fprintf(job->fp, "%g\n", job->result);
+}
+
 void print_job(job_st *job, mathgame_st *mg)
 {
-  char format_string[] = "%\0\0\0\0\0";
-  int digits_no = 1 + (int) (log(mg->jobs_count)/log(10));
-  int written_digits = snprintf(format_string + 1, digits_no + 1, "%d", digits_no);
-  int pos = (written_digits == 1) ? 2 : 3;
-  format_string[pos] = 'd';
-  
-  printf(format_string, job->job_no);
-  printf(": ");
-  print_nums_item(job->nums_item, mg->nums_len);
-  printf(" ");
-  print_ops_item(job->ops_item);
   if (job->success == 1) {
-    printf(" -> SUCCESS ");
-  } else {
-    printf(" -> ------- ");
+    char format_string[] = "%\0\0\0\0\0";
+    int digits_no = 1 + (int) (log(mg->jobs_count)/log(10));
+    int written_digits = snprintf(format_string + 1, digits_no + 1, "%d", digits_no);
+    int pos = (written_digits == 1) ? 2 : 3;
+    format_string[pos] = 'd';
+  
+    printf(format_string, job->job_no);
+    printf(" ");
+    print_nums_item(job->nums_item, mg->nums_len);
+    printf(" ");
+    print_ops_item(job->ops_item);
+    if (job->success == 1) {
+      printf(" SUCCESS ");
+    } else {
+      printf(" ------- ");
+    }
+    printf(" %g\n", job->result);
   }
-  printf(" %g\n", job->result);
 }
 

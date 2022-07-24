@@ -25,6 +25,8 @@ typedef struct {
 
 static char *valid_mathops = "+-*/";
 static size_t max_nums_len = 20;
+static char *base_filename = "mathgame_";
+static char *base_extension = ".csv";
 
 int get_options(int *pargc, char **argv, options_st *opts);
 int get_str_options(int *pargc, char **argv, options_st *opts);
@@ -33,6 +35,7 @@ int get_real_nums(options_st *opts);
 int get_real_total(options_st *opts);
 int get_real_mathops(options_st *opts);
 int get_real_filename(options_st *opts);
+char *file_with_timestamp(char *name, char *ext);
 void usage(char *progname);
 size_t count_numbers(char *string);
 

@@ -10,6 +10,7 @@ typedef struct {
   long *nums;
   char *mathops;
   char *filename;
+  FILE *fp;
   size_t nums_len;
   size_t mathops_len;
   size_t filename_len;
@@ -25,6 +26,7 @@ typedef struct {
   long *nums_item;
   char *ops_item;
   char *filename;
+  FILE *fp;
   size_t nums_item_len;
   size_t ops_item_len;
   size_t filename_len;
@@ -43,6 +45,7 @@ int ops_var_rep(int *so, char *ops, mathgame_st *mg);
 job_st *create_job(size_t job_no, long *nums, char *ops, mathgame_st *mg); 
 void print_nums_item(long *nums, size_t nums_len);
 void print_ops_item(char *ops);
+void print_csv_filename(job_st *job, char separator);
 void print_job(job_st *job, mathgame_st *mg);
 
 #endif /* JOBS_H___ */

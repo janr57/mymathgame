@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "messages.h"
 #include "algorithms.h"
@@ -46,7 +47,7 @@ int get_options(int *argc, char **argv, options_st *opts)
 int get_str_options(int *argc, char **argv, options_st *opts)
 {
   /* Expect at least four arguments */
-  if ((*argc != 5) && (*argc != 7)) {
+  if ((*argc != 5) && (*argc != 7) && (*argc != 9)) {
     usage(argv[0]);
     return -1;
   }
@@ -55,7 +56,7 @@ int get_str_options(int *argc, char **argv, options_st *opts)
   nflags = tflags = oflags = fflags = 0;
   int ch;
 
-  while ((ch = getopt(*argc, argv, "n:t:o:f::")) != -1) {
+  while ((ch = getopt(*argc, argv, "n:t:o:")) != -1) {
     switch (ch) {
     case 'n':
       nflags++;
@@ -75,7 +76,7 @@ int get_str_options(int *argc, char **argv, options_st *opts)
       opts->str_mathops = malloc(1 + opts->str_mathops_len);
       strncpy(opts->str_mathops, optarg, opts->str_mathops_len);
       break;
-    case 'f':
+      case 'f':
       fflags ++;
       opts->str_filename_len = strlen(optarg);
       opts->str_filename = malloc(1 + opts->str_filename_len);
@@ -241,8 +242,13 @@ int get_real_total(options_st *opts)
 {
   char *pstr;
   char ch;
-  // Convert 'str_total' to long, provided it contains only digits
+  // Convert 'str_total' to long, provided it contains only digits,
+  // although it can start with '+' and '-', as well as digits
   pstr = opts->str_total;
+  if ((*pstr == '-') || (*pstr == '+')) {
+    pstr++;
+  }
+  
   while ((ch = *pstr++) != '\0') {
     if (!isdigit(ch)) {
       fprintf(stderr, "%s: %s\n", ERR_TOTAL, opts->str_total);
@@ -303,11 +309,27 @@ int get_real_filename(options_st *opts)
 {
   // Check whether the user asked for a particular file name or not
   if (opts->str_filename_len == 0) {
-    opts->filename = file_with_timestamp("mathgame_", ".log");
+    opts->filename = file_with_timestamp(base_filename, base_extension);
   }
   opts->filename_len = strlen(opts->filename);
 
   return 0;
+}
+
+/*
+ Returns the current time.
+*/
+char *file_with_timestamp(char *name, char *ext)
+{
+  char *filename = malloc(1 + (strlen(name) + sizeof(char) * 16 + strlen(ext)));
+  time_t ltime = time(NULL);
+  struct tm *tm;
+  tm = localtime(&ltime);
+
+  sprintf(filename, "%s%04d%02d%02d%02d%02d%02d%s", name, tm->tm_year+1900,
+	  tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, ext);
+  
+  return filename;
 }
 
 void usage(char *progname) {

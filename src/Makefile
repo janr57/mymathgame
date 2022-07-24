@@ -26,5 +26,5 @@ mathops.o: jobs.c jobs.h messages.h
 .PHONY: clean
 
 clean:
-	rm -f $(PROG) *.o *~ *#
+	rm -f $(PROG) *.o *~ *# 
 

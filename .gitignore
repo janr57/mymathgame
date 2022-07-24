@@ -1,6 +1,8 @@
 # .gitignore
 
 *~
+*.csv
+mathgame*
 src/mymathgame
 src/*.o
 src/*~
