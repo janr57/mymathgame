@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     }
   }
 
-  printf("Count: %lu\n", count);
+  printf("Count: %zu\n", count);
   long *results = malloc(count * sizeof(long));
   memset(results, 999999999, count * sizeof(long));
   long *nums = malloc(count * sizeof(long));
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
     }
   }
 
-  first_lnums_permutation(results, count);  
+  first_long_lexic_permutation(results, count);  
 
   size_t index = 0;
   long prev_num = results[index];
@@ -129,7 +129,7 @@ int main(int argc, char **argv)
     count++;
   }
 
-  printf("Stats table len: %lu\n", count);
+  printf("Stats table len: %zu\n", count);
 
   for (size_t i = 0; i < count; i++) {
     if (stats[i] != 0) {

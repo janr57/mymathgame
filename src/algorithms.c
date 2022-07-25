@@ -58,7 +58,8 @@ int next_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len)
   return retval;
 }
 
-int first_lnums_permutation(long *nums, size_t nums_len)
+/* Computes the first lexicographical permutation of 'nums' */
+int first_long_lexic_permutation(long *nums, size_t nums_len)
 {
   long temp;
   long *p = nums;
@@ -75,13 +76,11 @@ int first_lnums_permutation(long *nums, size_t nums_len)
   return 1;
 }
 
-/*
- * Computes the next lexicographical permutation of the specified array of
- * long ints in place */
-int next_lnums_permutation(long *nums, size_t len)
+/* Computes the next lexicographical permutation of 'nums' */
+int next_long_lexic_permutation(long *nums, size_t nums_len)
 {
   // Find the longest non-increasing suffix
-  size_t i = len - 1;
+  size_t i = nums_len - 1;
   while (i > 0 && nums[i - 1] >= nums[i]) {
     i--;
     // Now i is the head index of the suffix
@@ -94,7 +93,7 @@ int next_lnums_permutation(long *nums, size_t len)
 
   // Let nums[i - 1] be the pivot
   // Find rightmost element greater than the pivot
-  size_t j = len - 1;
+  size_t j = nums_len - 1;
   while (nums[j] <= nums[i - 1]) {
     j--;
     // Now the value nums[j] will become the new pivot
@@ -107,7 +106,7 @@ int next_lnums_permutation(long *nums, size_t len)
   nums[j] = temp;
 
   // Reverse the suffix
-  j = len - 1;
+  j = nums_len - 1;
   while (i < j) {
     temp = nums[i];
     nums[i] = nums[j];

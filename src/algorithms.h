@@ -14,9 +14,8 @@ static long factorial_table[] =
 int find_string(char *str, char ch);
 int first_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
 int next_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
-int find_string(char *avail_ops, char ch);
-int first_lnums_permutation(long *nums, size_t len);
-int next_lnums_permutation(long *nums, size_t len);
+int first_long_lexic_permutation(long *nums, size_t nums_len);
+int next_long_lexic_permutation(long *nums, size_t nums_len);
 size_t pwr_count(long *nums, size_t len);
 
 char *file_with_timestamp(char *name, char *ext);

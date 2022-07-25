@@ -158,10 +158,10 @@ int nums_perm_rep(int *sn, long *nums, mathgame_st *mg)
   int retnums = 1;
  
   if (*sn == 1) {
-    retnums = first_lnums_permutation(nums, mg->nums_len);
+    retnums = first_long_lexic_permutation(nums, mg->nums_len);
     *sn = 0;
   } else if (*sn == 0) {
-    retnums = next_lnums_permutation(nums, mg->nums_len);
+    retnums = next_long_lexic_permutation(nums, mg->nums_len);
   }
   
   return retnums;
@@ -205,7 +205,7 @@ void print_ops_item(char *ops)
 }
 
 void print_csv_filename(job_st *job, char separator) {
-  fprintf(job->fp, "%lu%c", job->job_no,separator);
+  fprintf(job->fp, "%zu%c", job->job_no, separator);
   for (int i = 0; i < job->nums_item_len; i++) {
     fprintf(job->fp, "%ld", job->nums_item[i]);
     if (i != job->nums_item_len - 1) {
