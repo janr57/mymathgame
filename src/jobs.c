@@ -46,7 +46,7 @@ int produce_jobs(mathgame_st *mg)
   size_t job_no = 1;
   job_st *job = NULL;
   mg->fp = fopen(mg->filename, "w");
-  fprintf(mg->fp, "job\tnums\tsuccess\tresult\n");
+  fprintf(mg->fp, "job\tnums\tops\tsuccess\tresult\n");
   // Produce jobs to calculate and compare with total
   while ((retnums = nums_perm_rep(&sn, nums_item, mg)) != 0) {
     while ((retops = ops_var_rep(&so, ops_item, mg)) != 0) {

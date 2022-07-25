@@ -9,14 +9,14 @@
 
 #include "algorithms.h"
 
-int find_string(char *mathops, char ch)
+int find_string(char *str, char ch)
 {
-  char *found = strchr(mathops, ch);
+  char *found = strchr(str, ch);
   if (found == NULL) {
     return -1;
   }
   
-  int i = strlen(mathops) - strlen(found);
+  int i = strlen(str) - strlen(found);
 
   return i;
 }

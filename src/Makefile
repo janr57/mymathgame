@@ -1,17 +1,18 @@
 # Makefile for mymathgame
 
-PROG = mymathgame
+PROG1 = mymathgame
+PROG2 = freqtable
 
 CC = clang
 
 CFLAGS = -g -Wall -O0
 
-all: $(PROG)
+all: $(PROG1) $(PROG2)
 
-$(PROG): $(PROG).o algorithms.o options.o jobs.o
+$(PROG1): $(PROG1).o algorithms.o options.o jobs.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
-$(PROG).o: $(PROG).c messages.h algorithms.h options.h jobs.h
+$(PROG1).o: $(PROG1).c messages.h algorithms.h options.h jobs.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 options.o: options.c options.h messages.h
@@ -23,8 +24,14 @@ algorithms.o: algorithms.c algorithms.h
 mathops.o: jobs.c jobs.h messages.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+$(PROG2): $(PROG2).o algorithms.o
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+$(PROG2).o: $(PROG2).c $(PROG2).h algorithms.h
+	$(CC) $(CFLAGS) -o $@ -c $< 
+
 .PHONY: clean
 
 clean:
-	rm -f $(PROG) *.o *~ *# 
+	rm -f $(PROG1) $(PROG2) *.o *~ *# 
 

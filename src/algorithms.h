@@ -11,7 +11,7 @@ static long factorial_table[] =
    6227020800, 87178291200, 1307674368000, 20922789888000, 355687428096000,
    6402373705728000, 121645100408832000, 2432902008176640000};
 
-int find_string(char *mathops, char ch);
+int find_string(char *str, char ch);
 int first_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
 int next_ops_item(char *ops_item, size_t len, char *mathops, size_t mathops_len);
 int find_string(char *avail_ops, char ch);
